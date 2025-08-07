@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1020" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="index, follow" />
+    <title>Coming Soon</title>
+    <meta name="description" content="We're building the toolbox of tomorrow. Get in touch in the meantime." />
+    <link rel="canonical" href="https://theairbrushcompany.co.uk/" />
+    <meta property="og:title" content="Coming Soon" />
+    <meta property="og:description" content="We're building the toolbox of tomorrow. Get in touch in the meantime." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://theairbrushcompany.co.uk/" />
+    <meta property="og:site_name" content="xenargs softworks" />
+    <meta property="og:image" content="https://theairbrushcompany.co.uk/og-image.jpg" />
+    <meta name="twitter:image" content="https://theairbrushcompany.co.uk/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="author" content="xenargs softworks" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8E%A8%3C/text%3E%3C/svg%3E" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg">
+      <canvas id="stars" aria-hidden="true"></canvas>
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+      <div class="vignette"></div>
+    </div>
+
+    <main class="card" role="main">
+      <div class="logo" aria-label="Brand"><span class="logo-text">xenargs softworks</span></div>
+      <h1>Coming Soon</h1>
+      <p class="tagline">We're building the toolbox of tomorrow. In the meantime, say hi:</p>
+
+      <ul class="contacts">
+        <li>
+          <a class="contact" href="mailto:xenargs@theairbrushcompany.co.uk">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M2 6.75A2.75 2.75 0 0 1 4.75 4h14.5A2.75 2.75 0 0 1 22 6.75v10.5A2.75 2.75 0 0 1 19.25 20H4.75A2.75 2.75 0 0 1 2 17.25V6.75Zm2.75-.25a.25.25 0 0 0-.25.25v.37l7.14 4.47c.23.14.49.14.72 0L20.5 7.06v-.31a.25.25 0 0 0-.25-.25H4.75Zm15.5 3.13-6.82 4.27a2.75 2.75 0 0 1-2.86 0L3.75 9.63v7.62c0 .14.11.25.25.25h14.5c.14 0 .25-.11.25-.25V9.63Z"/>
+            </svg>
+            <span>xenargs@theairbrushcompany.co.uk</span>
+          </a>
+        </li>
+        
+        <li>
+          <a class="contact" href="https://github.com/xenargs" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.58 2 12.24c0 4.52 2.87 8.35 6.85 9.71.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.1-1.49-1.1-1.49-.9-.63.07-.62.07-.62 1 .07 1.52 1.06 1.52 1.06.89 1.57 2.33 1.12 2.9.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.13-4.56-5 0-1.1.38-2 .99-2.7-.1-.26-.43-1.32.09-2.75 0 0 .83-.27 2.73 1.03a9.2 9.2 0 0 1 2.49-.34c.85 0 1.71.11 2.51.34 1.89-1.3 2.72-1.03 2.72-1.03.53 1.43.2 2.49.1 2.75.62.7.99 1.6.99 2.7 0 3.88-2.34 4.73-4.57 4.98.36.31.68.93.68 1.88 0 1.36-.01 2.45-.01 2.79 0 .27.18.59.69.49A10.03 10.03 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z" clip-rule="evenodd"/>
+            </svg>
+            <span>github.com/xenargs</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved.</p>
+    </main>
+
+    <script>
+      // Year stamp
+      const y = document.getElementById('year');
+      if (y) y.textContent = String(new Date().getFullYear());
+
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Smooth parallax tilt with easing + foil highlight mapping
+      (function initTilt() {
+        if (reduceMotion) return;
+        const card = document.querySelector('.card');
+        if (!card) return;
+        const logo = document.querySelector('.logo');
+        const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        let targetX = 0, targetY = 0; // desired tilt angles
+        let currentX = 0, currentY = 0; // animated tilt angles
+        let angleTarget = 0, angleCurrent = 0; // foil angle (deg)
+        let spotXTarget = 50, spotYTarget = 50; // foil spot (%)
+        let spotXCurrent = 50, spotYCurrent = 50; // animated foil spot (%)
+        let rafId = 0;
+
+        function lerpAngle(current, target, t) {
+          // shortest path interpolation in degrees
+          let diff = ((target - current + 540) % 360) - 180;
+          return current + diff * t;
+        }
+
+        function animate(ts = 0) {
+          const ease = 0.10; // tilt smoothing
+          const foilEase = 0.06; // foil smoothing (slower for more relaxed motion)
+          currentX += (targetX - currentX) * ease;
+          currentY += (targetY - currentY) * ease;
+          card.style.transform = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
+
+          // Foil smoothing and updates
+          if (isTouch) {
+            // On touch devices, drive targets with gentle autonomous motion (slower)
+            const t = ts * 0.001;
+            angleTarget = (t * 15) % 360;
+            spotXTarget = 50 + Math.sin(t * 0.45) * 10;
+            spotYTarget = 50 + Math.cos(t * 0.60) * 8;
+          }
+
+          angleCurrent = lerpAngle(angleCurrent, angleTarget, foilEase);
+          spotXCurrent += (spotXTarget - spotXCurrent) * foilEase;
+          spotYCurrent += (spotYTarget - spotYCurrent) * foilEase;
+
+          card.style.setProperty('--angle', angleCurrent.toFixed(1) + 'deg');
+          if (logo) logo.style.setProperty('--angle', angleCurrent.toFixed(1) + 'deg');
+          card.style.setProperty('--spotX', spotXCurrent.toFixed(1) + '%');
+          card.style.setProperty('--spotY', spotYCurrent.toFixed(1) + '%');
+          rafId = requestAnimationFrame(animate);
+        }
+
+        function onMove(e) {
+          const r = card.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dx = (e.clientX - cx) / (r.width / 2);
+          const dy = (e.clientY - cy) / (r.height / 2);
+          targetX = clamp(-dy * 6, -8, 8);
+          targetY = clamp(dx * 7, -9, 9);
+
+          // Update foil angle globally (no localized mask)
+          const angle = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI + 180;
+          angleTarget = angle;
+          // Move specular spot opposite to tilt like a real card (set targets; smoothing occurs in animate)
+          spotXTarget = 50 + (-targetY / 9) * 25; // map tilt to percentage
+          spotYTarget = 50 + (targetX / 8) * 18;
+        }
+
+        function reset() {
+          targetX = 0; targetY = 0;
+        }
+
+        animate();
+        if (!isTouch) {
+          window.addEventListener('mousemove', onMove);
+          window.addEventListener('mouseleave', reset);
+        }
+      })();
+
+      // Lightweight starfield background
+      (function initStars() {
+        const canvas = document.getElementById('stars');
+        if (!canvas || reduceMotion) return;
+        const ctx = canvas.getContext('2d');
+        const DPR = Math.min(window.devicePixelRatio || 1, 2);
+        let width = 0, height = 0, stars = [], rafId = 0;
+
+        function resize() {
+          const { innerWidth, innerHeight } = window;
+          width = innerWidth; height = innerHeight;
+          canvas.width = Math.floor(width * DPR);
+          canvas.height = Math.floor(height * DPR);
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          const area = width * height;
+          const isSmall = width <= 480;
+          const base = isSmall ? (area / 14000) : (area / 9000);
+          const cap = isSmall ? 140 : 240;
+          const starCount = Math.min(Math.floor(base), cap);
+          stars = Array.from({ length: starCount }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * 1.2 + 0.2,
+            a: Math.random() * Math.PI * 2,
+            s: Math.random() * 0.4 + 0.05,
+          }));
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          for (const star of stars) {
+            star.a += star.s * 0.02;
+            const twinkle = 0.3 + Math.abs(Math.sin(star.a)) * 0.7;
+            ctx.globalAlpha = twinkle * 0.7;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          rafId = requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+        window.addEventListener('resize', () => {
+          cancelAnimationFrame(rafId);
+          resize();
+          draw();
+        });
+      })();
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "xenargs softworks",
+        "url": "https://theairbrushcompany.co.uk/",
+        "email": "mailto:xenargs@theairbrushcompany.co.uk",
+        "sameAs": [
+          "https://github.com/xenargs"
+        ]
+      }
+    </script>
+  </body>
+</html>
+
+
