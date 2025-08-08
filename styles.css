@@ -25,8 +25,8 @@ body {
   perspective: 900px;
 }
 
-.bg { position: fixed; inset: 0; overflow: hidden; }
-canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .vignette {
   position: absolute;
   inset: -10%;
@@ -289,7 +289,7 @@ h1 {
 }
 
 /* Inline CTA link spacing */
-.contact.cta { margin-top: 14px; margin-bottom: 8px; }
+.contact.cta { margin: 6px 0; }
 
 .contact:hover {
   transform: translateY(-1px);
@@ -338,15 +338,16 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
 }
 
 @media (max-width: 480px) {
-  body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  body { display: block; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
   .card {
     width: min(560px, 92vw);
     padding: 22px 18px;
     border-radius: 18px;
+    margin: 16px auto;
   }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
-  .contact.cta { margin-top: 16px; margin-bottom: 10px; }
+  .contact.cta { margin: 6px 0; }
   .contact { padding: 10px 12px; }
   h1 { font-size: clamp(30px, 9vw, 46px); }
   .logo { font-size: clamp(16px, 3.4vw, 18px); }
