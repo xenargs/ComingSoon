@@ -61,7 +61,7 @@ canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-
 /* Additional low, wide glow to avoid cutoff on long scrolls */
 .blob.b4 {
   background: radial-gradient(circle at 50% 60%, #5eead455, transparent 65%);
-  bottom: -30vmax;
+  bottom: -60vmax;
   left: -20vmax;
   width: 90vmax;
   height: 90vmax;
@@ -70,7 +70,7 @@ canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-
 /* Extra bottom-right glow for deep scroll coverage */
 .blob.b5 {
   background: radial-gradient(circle at 60% 60%, #7c3aed55, transparent 65%);
-  bottom: -32vmax;
+  bottom: -64vmax;
   right: -22vmax;
   width: 88vmax;
   height: 88vmax;
@@ -298,8 +298,11 @@ h1 {
 /* Desktop layout adjustments for long team page */
 @media (min-width: 1024px) {
   .page-long .card {
-    width: min(1200px, 94vw);
+    width: min(900px, 92vw);
     padding: 36px 36px 28px;
+    max-height: 85vh;
+    overflow-y: auto;
+    margin: 7.5vh auto;
   }
   .team-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -429,8 +432,8 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .card::after { opacity: 0.10; }
   /* Lighter background blobs for perf */
   .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
-  .blob.b4 { bottom: -40vmax; width: 110vmax; height: 110vmax; }
-  .blob.b5 { bottom: -44vmax; right: -28vmax; width: 120vmax; height: 120vmax; }
+  .blob.b4 { bottom: -80vmax; width: 110vmax; height: 110vmax; }
+  .blob.b5 { bottom: -88vmax; right: -28vmax; width: 120vmax; height: 120vmax; }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
   .contact.cta { margin: 6px 0; }
