@@ -545,6 +545,16 @@ h1 {
   text-shadow: 0 2px 18px rgba(0,0,0,0.25);
 }
 
+.airbrush-title {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #b7bfce;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.12));
+  text-shadow: 0 2px 18px rgba(0,0,0,0.25);
+}
+
 .tagline {
   margin: 0 0 18px;
   color: var(--muted);
@@ -717,11 +727,7 @@ h1 {
 /* Subtle emoji styling */
 .emoji { margin-left: 6px; opacity: 0.95; }
 
-/* Breadcrumbs */
-.breadcrumbs { margin: 6px 0 10px; color: var(--muted); font-size: 13px; }
-.breadcrumbs a { color: var(--muted); text-decoration: none; }
-.breadcrumbs a:hover { text-decoration: underline; }
-.breadcrumbs .sep { margin: 0 6px; opacity: 0.7; }
+
 
 .small {
   margin-top: 22px;
@@ -1183,6 +1189,16 @@ input:focus-visible, button:focus-visible, a:focus-visible {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* Fix emoji formatting in FAQ buttons */
+.faq-toggle .emoji {
+  margin-left: 8px;
+  margin-right: 12px;
+  opacity: 0.9;
+  vertical-align: middle;
+  display: inline-block;
+  line-height: 1;
+}
+
 .faq-toggle:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255,255,255,0.16);
@@ -1278,5 +1294,36 @@ input:focus-visible, button:focus-visible, a:focus-visible {
     padding: 10px 0 10px 14px;
   }
 }
+
+/* Contact Button
+-------------------------------------------------- */
+.contact-button-container {
+  text-align: center;
+  margin: 40px 0 20px;
+}
+
+.button-contact {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.06);
+}
+
+.button-contact:hover,
+.button-contact:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.2);
+}
+
 
 
