@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://theairbrushcompany.co.uk/sitemap.xml
-
-
