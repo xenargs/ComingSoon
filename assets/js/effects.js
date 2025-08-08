@@ -184,92 +184,83 @@
     animateGlow();
   }
 
-  // Particle Trail Effect
-  function initParticleTrail() {
+  // Balatro-style Card Tilt Effect
+  function initCardTilt() {
     if (reduceMotion || isTouch) return;
 
-    const canvas = document.createElement('canvas');
-    canvas.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    `;
-    document.body.appendChild(canvas);
+    const cards = document.querySelectorAll('main.card');
+    if (!cards.length) return;
 
-    const ctx = canvas.getContext('2d');
-    const particles = [];
-    let mouseX = 0, mouseY = 0;
-    let isMoving = false;
+    cards.forEach(card => {
+      let mouseX = 0, mouseY = 0;
+      let currentX = 0, currentY = 0;
+      let isHovering = false;
 
-    function resize() {
-      canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
-      canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
-      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-    }
-
-    function createParticle(x, y) {
-      return {
-        x: x,
-        y: y,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        life: 1,
-        decay: Math.random() * 0.02 + 0.01,
-        size: Math.random() * 3 + 1
-      };
-    }
-
-    function updateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Add new particles when mouse is moving
-      if (isMoving && Math.random() < 0.3) {
-        particles.push(createParticle(mouseX, mouseY));
+      function updateTilt(e) {
+        const rect = card.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Calculate mouse position relative to card center
+        mouseX = (e.clientX - centerX) / (rect.width / 2);
+        mouseY = (e.clientY - centerY) / (rect.height / 2);
+        
+        // Clamp values to prevent extreme tilts
+        mouseX = Math.max(-1, Math.min(1, mouseX));
+        mouseY = Math.max(-1, Math.min(1, mouseY));
       }
 
-      // Update and draw particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= p.decay;
-        p.size *= 0.99;
-
-        if (p.life <= 0 || p.size < 0.1) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = `hsl(${200 + p.life * 60}, 70%, 60%)`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+      function animateTilt() {
+        // Smooth interpolation for natural movement
+        currentX += (mouseX - currentX) * 0.1;
+        currentY += (mouseY - currentY) * 0.1;
+        
+        // Apply 3D transform with perspective
+        const rotateX = -currentY * 8; // Tilt up/down
+        const rotateY = currentX * 8;  // Tilt left/right
+        const translateZ = isHovering ? 20 : 0; // Slight lift when hovering
+        
+        card.style.transform = `
+          perspective(1000px)
+          rotateX(${rotateX}deg)
+          rotateY(${rotateY}deg)
+          translateZ(${translateZ}px)
+        `;
+        
+        // Add subtle shadow based on tilt
+        const shadowX = currentX * 10;
+        const shadowY = currentY * 10;
+        const shadowBlur = isHovering ? 30 : 20;
+        
+        card.style.boxShadow = `
+          0 10px 40px rgba(0,0,0,0.35),
+          inset 0 1px 0 rgba(255,255,255,0.06),
+          0 0 20px rgba(124, 58, 237, calc(var(--glow-intensity) * 0.3)),
+          0 0 40px rgba(6, 182, 212, calc(var(--glow-intensity) * 0.2)),
+          ${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0,0,0,0.3)
+        `;
+        
+        requestAnimationFrame(animateTilt);
       }
 
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(updateParticles);
-    }
+      // Mouse enter
+      card.addEventListener('mouseenter', () => {
+        isHovering = true;
+      });
 
-    let moveTimeout;
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      isMoving = true;
-      
-      clearTimeout(moveTimeout);
-      moveTimeout = setTimeout(() => {
-        isMoving = false;
-      }, 100);
+      // Mouse move
+      card.addEventListener('mousemove', updateTilt);
+
+      // Mouse leave
+      card.addEventListener('mouseleave', () => {
+        isHovering = false;
+        mouseX = 0;
+        mouseY = 0;
+      });
+
+      // Start animation
+      animateTilt();
     });
-
-    resize();
-    updateParticles();
-    window.addEventListener('resize', resize);
   }
 
   // Typing Effect for Headlines
@@ -296,15 +287,104 @@
     });
   }
 
-  // Floating Animation for Elements
-  function initFloatingElements() {
-    if (reduceMotion) return;
-
-    const floatingElements = document.querySelectorAll('.logo, .value-props li');
+  // Dropdown functionality
+  function initDropdowns() {
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    const faqToggles = document.querySelectorAll('.faq-toggle');
     
-    floatingElements.forEach((el, index) => {
-      el.style.animation = `float ${3 + index * 0.5}s ease-in-out infinite`;
-      el.style.animationDelay = `${index * 0.2}s`;
+    // Function to close all dropdowns of a specific type
+    function closeAllDropdowns(toggles, contentSelector) {
+      toggles.forEach(toggle => {
+        toggle.setAttribute('aria-expanded', 'false');
+        const contentId = toggle.getAttribute('aria-controls');
+        const content = document.getElementById(contentId);
+        if (content) {
+          content.classList.remove('open');
+        }
+      });
+    }
+    
+    // Function to toggle a dropdown
+    function toggleDropdown(toggle, content, isExpanded) {
+      if (isExpanded) {
+        toggle.setAttribute('aria-expanded', 'false');
+        content.classList.remove('open');
+      } else {
+        toggle.setAttribute('aria-expanded', 'true');
+        content.classList.add('open');
+      }
+    }
+    
+    // Main dropdown toggles (FAQ section)
+    dropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        const contentId = this.getAttribute('aria-controls');
+        const content = document.getElementById(contentId);
+        
+        if (!content) return;
+        
+        // Close all other main dropdowns
+        dropdownToggles.forEach(otherToggle => {
+          if (otherToggle !== this) {
+            const otherContentId = otherToggle.getAttribute('aria-controls');
+            const otherContent = document.getElementById(otherContentId);
+            if (otherContent) {
+              otherToggle.setAttribute('aria-expanded', 'false');
+              otherContent.classList.remove('open');
+            }
+          }
+        });
+        
+        // Toggle current dropdown
+        toggleDropdown(this, content, isExpanded);
+      });
+      
+      // Add keyboard support
+      toggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+    
+    // FAQ question toggles (nested dropdowns)
+    faqToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        const contentId = this.getAttribute('aria-controls');
+        const content = document.getElementById(contentId);
+        
+        if (!content) return;
+        
+        // Close all other FAQ toggles
+        faqToggles.forEach(otherToggle => {
+          if (otherToggle !== this) {
+            const otherContentId = otherToggle.getAttribute('aria-controls');
+            const otherContent = document.getElementById(otherContentId);
+            if (otherContent) {
+              otherToggle.setAttribute('aria-expanded', 'false');
+              otherContent.classList.remove('open');
+            }
+          }
+        });
+        
+        // Toggle current FAQ
+        toggleDropdown(this, content, isExpanded);
+      });
+      
+      // Add keyboard support
+      toggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
     });
   }
 
@@ -313,9 +393,9 @@
     initStarfield();
     initScrollReveal();
     initGlowEffect();
-    initParticleTrail();
+    initCardTilt();
     initTypingEffect();
-    initFloatingElements();
+    initDropdowns();
   }
 
   // Start effects when DOM is loaded

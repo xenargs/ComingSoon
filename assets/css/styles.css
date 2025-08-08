@@ -132,12 +132,7 @@ canvas#stars {
   animation-duration: 50s;
 }
 
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(6vmax, -3vmax) scale(1.05); }
-  50% { transform: translate(-4vmax, 5vmax) scale(0.98); }
-  75% { transform: translate(2vmax, -6vmax) scale(1.03); }
-}
+
 
 /* Cool Effects CSS */
 
@@ -158,13 +153,11 @@ canvas#stars {
     0 0 20px rgba(124, 58, 237, calc(var(--glow-intensity) * 0.3)),
     0 0 40px rgba(6, 182, 212, calc(var(--glow-intensity) * 0.2));
   transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
 }
 
-/* Floating Animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
+
 
 /* Enhanced Reveal Animation */
 .reveal {
@@ -352,9 +345,10 @@ canvas#stars {
     transform: none;
   }
   
-  @keyframes float {
-    0%, 100% { transform: none; }
-    50% { transform: none; }
+  /* Disable 3D transforms for reduced motion */
+  .card {
+    transform: none !important;
+    transform-style: flat !important;
   }
   
   .reveal {
