@@ -28,8 +28,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://formspree.io" />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="./styles.css" />
 
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
@@ -41,6 +43,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
     <div class="bg">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="blob b1"></div>
@@ -54,7 +57,7 @@
       <div class="vignette"></div>
     </div>
 
-    <main class="card" role="main">
+    <main id="main" class="card" role="main">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
         <a href="/">Home</a>
       </nav>
@@ -94,22 +97,49 @@
         </li>
       </ul>
 
-      <section class="faq" aria-label="FAQ">
-        <h2>FAQ</h2>
-        <dl>
-          <dt class="reveal">When will you launch? <span class="emoji" aria-hidden="true">🚀</span></dt>
-          <dd class="reveal">We’re inviting early adopters soon. Join the waitlist for first access and updates.</dd>
-          <dt class="reveal">Who is this for? <span class="emoji" aria-hidden="true">👩‍💻</span></dt>
-          <dd class="reveal">Indie developers and small teams who want streamlined automation and developer tooling.</dd>
-          <dt class="reveal">How can I get early access? <span class="emoji" aria-hidden="true">✨</span></dt>
-          <dd class="reveal">Add your email to the waitlist above. We’ll send a private invite when the beta is ready.</dd>
-        </dl>
+      <section class="faq dropdown-section" aria-label="FAQ">
+        <button class="dropdown-toggle" aria-expanded="false" aria-controls="faq-content">
+          <h2>FAQ</h2>
+          <svg class="dropdown-icon" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M7 10l5 5 5-5z"/>
+          </svg>
+        </button>
+        <div id="faq-content" class="dropdown-content">
+          <dl>
+            <dt class="faq-question reveal">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-answer-1">
+                When will you launch? <span class="emoji" aria-hidden="true">🚀</span>
+                <svg class="faq-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </button>
+            </dt>
+            <dd id="faq-answer-1" class="faq-answer reveal">We're inviting early adopters soon. Join the waitlist for first access and updates.</dd>
+            
+            <dt class="faq-question reveal">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-answer-2">
+                Who is this for? <span class="emoji" aria-hidden="true">👩‍💻</span>
+                <svg class="faq-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </button>
+            </dt>
+            <dd id="faq-answer-2" class="faq-answer reveal">Indie developers and small teams who want streamlined automation and developer tooling.</dd>
+            
+            <dt class="faq-question reveal">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-answer-3">
+                How can I get early access? <span class="emoji" aria-hidden="true">✨</span>
+                <svg class="faq-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </button>
+            </dt>
+            <dd id="faq-answer-3" class="faq-answer reveal">Add your email to the waitlist above. We'll send a private invite when the beta is ready.</dd>
+          </dl>
+        </div>
       </section>
 
-      <a class="contact cta" href="/about.html" style="width: fit-content;">
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 17l5-5-5-5v10z"/></svg>
-        <span>About us</span>
-      </a>
+
 
       <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved. <span class="version">v3</span></p>
     </main>
@@ -220,6 +250,7 @@
           
           // On mobile, use larger canvas dimensions to prevent cutoff
           const isMobile = innerWidth <= 480;
+          const isTablet = innerWidth > 480 && innerWidth <= 768;
           if (isMobile) {
             width = innerWidth * 3; // 300vw for extra coverage
             height = innerHeight * 4; // 400vh for extra coverage
@@ -227,6 +258,13 @@
             canvas.style.height = (innerHeight * 4) + 'px';
             canvas.style.left = (-innerWidth) + 'px';
             canvas.style.top = (-innerHeight * 2) + 'px';
+          } else if (isTablet) {
+            width = innerWidth * 2.5; // 250vw for tablet
+            height = innerHeight * 3; // 300vh for tablet
+            canvas.style.width = (innerWidth * 2.5) + 'px';
+            canvas.style.height = (innerHeight * 3) + 'px';
+            canvas.style.left = (-innerWidth * 0.75) + 'px';
+            canvas.style.top = (-innerHeight * 1.5) + 'px';
           } else {
             width = innerWidth * 2; // 200vw for desktop
             height = innerHeight * 2; // 200vh for desktop
@@ -315,6 +353,107 @@
         }, { root: null, threshold: 0.15 });
         revealEls.forEach(el => io.observe(el));
       })();
+
+      // Dropdown functionality
+      (function initDropdowns() {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        const faqToggles = document.querySelectorAll('.faq-toggle');
+        
+        // Function to close all dropdowns of a specific type
+        function closeAllDropdowns(toggles, contentSelector) {
+          toggles.forEach(toggle => {
+            toggle.setAttribute('aria-expanded', 'false');
+            const contentId = toggle.getAttribute('aria-controls');
+            const content = document.getElementById(contentId);
+            if (content) {
+              content.classList.remove('open');
+            }
+          });
+        }
+        
+        // Function to toggle a dropdown
+        function toggleDropdown(toggle, content, isExpanded) {
+          if (isExpanded) {
+            toggle.setAttribute('aria-expanded', 'false');
+            content.classList.remove('open');
+          } else {
+            toggle.setAttribute('aria-expanded', 'true');
+            content.classList.add('open');
+          }
+        }
+        
+        // Main dropdown toggles (FAQ section)
+        dropdownToggles.forEach(toggle => {
+          toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            const contentId = this.getAttribute('aria-controls');
+            const content = document.getElementById(contentId);
+            
+            if (!content) return;
+            
+            // Close all other main dropdowns
+            dropdownToggles.forEach(otherToggle => {
+              if (otherToggle !== this) {
+                const otherContentId = otherToggle.getAttribute('aria-controls');
+                const otherContent = document.getElementById(otherContentId);
+                if (otherContent) {
+                  otherToggle.setAttribute('aria-expanded', 'false');
+                  otherContent.classList.remove('open');
+                }
+              }
+            });
+            
+            // Toggle current dropdown
+            toggleDropdown(this, content, isExpanded);
+          });
+          
+          // Add keyboard support
+          toggle.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.click();
+            }
+          });
+        });
+        
+        // FAQ question toggles (nested dropdowns)
+        faqToggles.forEach(toggle => {
+          toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            const contentId = this.getAttribute('aria-controls');
+            const content = document.getElementById(contentId);
+            
+            if (!content) return;
+            
+            // Close all other FAQ toggles
+            faqToggles.forEach(otherToggle => {
+              if (otherToggle !== this) {
+                const otherContentId = otherToggle.getAttribute('aria-controls');
+                const otherContent = document.getElementById(otherContentId);
+                if (otherContent) {
+                  otherToggle.setAttribute('aria-expanded', 'false');
+                  otherContent.classList.remove('open');
+                }
+              }
+            });
+            
+            // Toggle current FAQ
+            toggleDropdown(this, content, isExpanded);
+          });
+          
+          // Add keyboard support
+          toggle.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.click();
+            }
+          });
+        });
+      })();
     </script>
 
     <script type="application/ld+json">
@@ -355,7 +494,7 @@
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
-          {"@type": "Question", "name": "When will you launch?", "acceptedAnswer": {"@type": "Answer", "text": "We’re inviting early adopters soon. Join the waitlist to get first access and updates."}},
+          {"@type": "Question", "name": "When will you launch?", "acceptedAnswer": {"@type": "Answer", "text": "We’re inviting early adopters soon. Join the waitlist for first access and updates."}},
           {"@type": "Question", "name": "Who is this for?", "acceptedAnswer": {"@type": "Answer", "text": "Indie developers and small teams who want streamlined automation and developer tooling."}},
           {"@type": "Question", "name": "How can I get early access?", "acceptedAnswer": {"@type": "Answer", "text": "Add your email to the waitlist on our site. We’ll send a private invite when the beta is ready."}}
         ]
@@ -367,27 +506,75 @@
         const form = document.getElementById('waitlist');
         if (!form) return;
         const emailInput = form.querySelector('input[name="email"]');
+        const submitButton = form.querySelector('button[type="submit"]');
         const endpoint = form.getAttribute('action') || '';
+        
         form.addEventListener('submit', async (e) => {
-          if (!emailInput || !emailInput.value) return;
+          e.preventDefault();
+          
+          if (!emailInput || !emailInput.value.trim()) {
+            emailInput?.focus();
+            return;
+          }
+
+          // Add loading state
+          form.classList.add('loading');
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Joining...';
+          }
+
           if (endpoint.includes('REPLACE_ME')) {
-            e.preventDefault();
             const email = emailInput.value.trim();
             window.location.href = 'mailto:xenargs@theairbrushcompany.co.uk?subject=Waitlist&body=' + encodeURIComponent('Please add me to the waitlist: ' + email);
             return;
           }
-          e.preventDefault();
+
           try {
-            const res = await fetch(endpoint, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
+            const res = await fetch(endpoint, { 
+              method: 'POST', 
+              headers: { 'Accept': 'application/json' }, 
+              body: new FormData(form) 
+            });
+            
             if (res.ok) {
-              form.innerHTML = '<span class="success">Thanks! You\'re on the list.</span>';
+              form.innerHTML = '<div class="success" style="text-align: center; padding: 16px; border-radius: 12px; background: rgba(101, 212, 110, 0.1); border: 1px solid rgba(101, 212, 110, 0.3);"><strong>Thanks! You\'re on the list.</strong><br><small>We\'ll send updates soon.</small></div>';
             } else {
-              form.innerHTML = '<span class="error">Something went wrong. Please try again.</span>';
+              throw new Error('Server error');
             }
-          } catch (_) {
-            form.innerHTML = '<span class="error">Network error. Please try again.</span>';
+          } catch (error) {
+            form.classList.remove('loading');
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.textContent = 'Join the waitlist';
+            }
+            
+            // Show error message
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'error';
+            errorMsg.style.cssText = 'text-align: center; padding: 12px; margin-top: 8px; border-radius: 8px; background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.3); color: #ff6b6b; font-size: 14px;';
+            errorMsg.innerHTML = '<strong>Something went wrong.</strong><br><small>Please try again or email us directly.</small>';
+            
+            // Remove any existing error messages
+            const existingError = form.parentNode?.querySelector('.error');
+            if (existingError) existingError.remove();
+            
+            form.parentNode?.insertBefore(errorMsg, form.nextSibling);
+            
+            // Remove error message after 5 seconds
+            setTimeout(() => errorMsg.remove(), 5000);
           }
         });
+        
+        // Real-time email validation
+        if (emailInput) {
+          emailInput.addEventListener('input', function() {
+            const isValid = this.validity.valid && this.value.trim().length > 0;
+            this.style.borderColor = this.value.length > 0 ? 
+              (isValid ? 'rgba(101, 212, 110, 0.5)' : 'rgba(255, 107, 107, 0.5)') : 
+              'rgba(255,255,255,0.14)';
+          });
+        }
       })();
     </script>
   </body>
