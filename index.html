@@ -221,19 +221,19 @@
           // On mobile, use larger canvas dimensions to prevent cutoff
           const isMobile = innerWidth <= 480;
           if (isMobile) {
-            width = innerWidth * 2; // 200vw
-            height = innerHeight * 3; // 300vh
+            width = innerWidth * 3; // 300vw for extra coverage
+            height = innerHeight * 4; // 400vh for extra coverage
+            canvas.style.width = (innerWidth * 3) + 'px';
+            canvas.style.height = (innerHeight * 4) + 'px';
+            canvas.style.left = (-innerWidth) + 'px';
+            canvas.style.top = (-innerHeight * 2) + 'px';
+          } else {
+            width = innerWidth * 2; // 200vw for desktop
+            height = innerHeight * 2; // 200vh for desktop
             canvas.style.width = (innerWidth * 2) + 'px';
-            canvas.style.height = (innerHeight * 3) + 'px';
+            canvas.style.height = (innerHeight * 2) + 'px';
             canvas.style.left = (-innerWidth / 2) + 'px';
             canvas.style.top = (-innerHeight) + 'px';
-          } else {
-            width = innerWidth;
-            height = innerHeight;
-            canvas.style.width = width + 'px';
-            canvas.style.height = height + 'px';
-            canvas.style.left = '0px';
-            canvas.style.top = '0px';
           }
           
           canvas.width = Math.floor(width * DPR);

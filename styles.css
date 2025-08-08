@@ -43,7 +43,7 @@ canvas#stars {
   width: 200vw; 
   height: 200vh; 
   left: -50vw;
-  top: -50vh;
+  top: -100vh;
   pointer-events: none; 
 }
 
@@ -53,12 +53,12 @@ canvas#stars {
     width: 300vw;
     height: 400vh;
     left: -100vw;
-    top: -150vh;
+    top: -200vh;
   }
 }
 .vignette {
   position: absolute;
-  inset: -200%;
+  inset: -300%;
   pointer-events: none;
   background: radial-gradient(500% 500% at 50% 20%, transparent 0 70%, rgba(0,0,0,0.55) 100%);
 }
@@ -73,7 +73,7 @@ canvas#stars {
   mix-blend-mode: screen;
   animation: float 28s ease-in-out infinite;
 }
-.blob.b1 { background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 60%); top: -300vmax; left: -100vmax; width: 300vmax; height: 300vmax; animation-duration: 30s; }
+.blob.b1 { background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 60%); top: -400vmax; left: -100vmax; width: 300vmax; height: 300vmax; animation-duration: 30s; }
 .blob.b2 { background: radial-gradient(circle at 70% 40%, var(--accent-2), transparent 60%); bottom: -150vmax; right: -100vmax; width: 250vmax; height: 250vmax; animation-duration: 36s; }
 .blob.b3 { background: radial-gradient(circle at 40% 70%, var(--accent-3), transparent 60%); top: 150vmax; right: -120vmax; width: 250vmax; height: 250vmax; animation-duration: 42s; }
 /* Additional dynamic lights for better visibility */
@@ -483,7 +483,7 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .card::after { opacity: 0.10; }
   /* Lighter background blobs for perf */
   .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
-  .blob.b1 { top: -500vmax; left: -200vmax; width: 500vmax; height: 500vmax; }
+  .blob.b1 { top: -600vmax; left: -200vmax; width: 500vmax; height: 500vmax; }
   .blob.b2 { bottom: -400vmax; right: -200vmax; width: 400vmax; height: 400vmax; }
   .blob.b3 { top: 300vmax; right: -250vmax; width: 400vmax; height: 400vmax; }
   .blob.b4 { bottom: -500vmax; left: -150vmax; width: 450vmax; height: 450vmax; }
@@ -491,7 +491,7 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .blob.b6 { top: -400vmax; right: -250vmax; width: 400vmax; height: 400vmax; }
   .blob.b7 { bottom: -450vmax; left: -220vmax; width: 450vmax; height: 450vmax; }
   .blob.b8 { top: 350vmax; left: -280vmax; width: 400vmax; height: 400vmax; }
-  .vignette { inset: -500%; background: radial-gradient(600% 600% at 50% 20%, transparent 0 75%, rgba(0,0,0,0.55) 100%); }
+  .vignette { inset: -600%; background: radial-gradient(600% 600% at 50% 20%, transparent 0 75%, rgba(0,0,0,0.55) 100%); }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
   .contact.cta { margin: 6px 0; }

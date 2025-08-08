@@ -145,7 +145,7 @@
             canvas.style.width = (innerW * 3) + 'px';
             canvas.style.height = (innerH * 4) + 'px';
             canvas.style.left = (-innerW) + 'px'; // Center the canvas
-            canvas.style.top = (-innerH * 1.5) + 'px'; // Position to cover top and bottom
+            canvas.style.top = (-innerH * 2) + 'px'; // Extend further up to cover top
           } else {
             // For desktop, also ensure full coverage
             width = innerW * 2; // 200vw for desktop
@@ -153,7 +153,7 @@
             canvas.style.width = (innerW * 2) + 'px';
             canvas.style.height = (innerH * 2) + 'px';
             canvas.style.left = (-innerW / 2) + 'px'; // Center the canvas
-            canvas.style.top = (-innerH / 2) + 'px'; // Center the canvas
+            canvas.style.top = (-innerH) + 'px'; // Extend further up to cover top
           }
           
           canvas.width = Math.floor(width * DPR);
