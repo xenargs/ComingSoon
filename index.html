@@ -150,13 +150,22 @@
       if (y) y.textContent = String(new Date().getFullYear());
 
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      // Only disable on primary touch devices, not touch-capable desktops
+      const isTouch = /Mobi|Android/i.test(navigator.userAgent);
 
       // Smooth parallax tilt with easing + foil highlight mapping
       (function initTilt() {
-        if (reduceMotion || isTouch) return;
+        console.log('Tilt init - reduceMotion:', reduceMotion, 'isTouch:', isTouch);
+        if (reduceMotion || isTouch) {
+          console.log('Tilt disabled due to reduceMotion or isTouch');
+          return;
+        }
         const card = document.querySelector('.card');
-        if (!card) return;
+        if (!card) {
+          console.log('ERROR: Card element not found!');
+          return;
+        }
+        console.log('Tilt enabled, card found:', card);
         const logo = document.querySelector('.logo');
         const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
 
@@ -179,7 +188,11 @@
           const foilEase = 0.06; // foil smoothing (slower for more relaxed motion)
           currentX += (targetX - currentX) * ease;
           currentY += (targetY - currentY) * ease;
-          card.style.transform = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
+          const transformString = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
+          card.style.transform = transformString;
+          if (Math.abs(targetX) > 0.1 || Math.abs(targetY) > 0.1) {
+            console.log('Animating transform:', transformString);
+          }
 
           // Foil smoothing and updates
           // Mobile tilt disabled above; foil motion only runs on pointer devices
@@ -203,6 +216,7 @@
           const dy = (e.clientY - cy) / (r.height / 2);
           targetX = clamp(-dy * 6, -8, 8);
           targetY = clamp(dx * 7, -9, 9);
+          console.log('Tilt:', targetX.toFixed(2), targetY.toFixed(2));
 
           // Update foil angle globally (no localized mask)
           const angle = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI + 180;

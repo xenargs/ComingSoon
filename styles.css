@@ -149,14 +149,13 @@ canvas#stars {
   box-shadow: 0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
   backdrop-filter: blur(14px) saturate(120%);
   transform-style: preserve-3d;
-  transition: transform 250ms ease;
   will-change: transform, filter;
   backface-visibility: hidden;
-  /* Foil control defaults */
-  --angle: 0deg; /* gradient rotation, updated via JS */
-  --foilOpacity: 0.16;
+  /* Initialize foil effect variables */
   --spotX: 50%;
   --spotY: 50%;
+  --angle: 0deg;
+  --foilOpacity: 0.15;
   overflow: hidden;           /* clip overlays to rounded corners */
   isolation: isolate;         /* contain blend modes within the card */
 }
@@ -223,6 +222,8 @@ canvas#stars {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  /* Initialize foil effect variables */
+  --angle: 0deg;
 }
 
 .logo-text {

@@ -76,29 +76,93 @@
       const y = document.getElementById('year');
       if (y) y.textContent = String(new Date().getFullYear());
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      // Tilt effect for card (mouse only)
-      (function initTilt(){
-        if (reduceMotion || isTouch) return;
+      // Only disable on primary touch devices, not touch-capable desktops
+      const isTouch = /Mobi|Android/i.test(navigator.userAgent);
+      // Smooth parallax tilt with easing + foil highlight mapping
+      (function initTilt() {
+        console.log('Tilt init - reduceMotion:', reduceMotion, 'isTouch:', isTouch);
+        if (reduceMotion || isTouch) {
+          console.log('Tilt disabled due to reduceMotion or isTouch');
+          return;
+        }
         const card = document.querySelector('.card');
-        if (!card) return;
+        if (!card) {
+          console.log('ERROR: Card element not found!');
+          return;
+        }
+        console.log('Tilt enabled, card found:', card);
+        const logo = document.querySelector('.logo');
         const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
-        let targetX = 0, targetY = 0; let currentX = 0, currentY = 0; let rafId = 0;
-        function animate(){
-          const ease = 0.10; currentX += (targetX - currentX) * ease; currentY += (targetY - currentY) * ease;
+
+        let targetX = 0, targetY = 0; // desired tilt angles
+        let currentX = 0, currentY = 0; // animated tilt angles
+        let angleTarget = 0, angleCurrent = 0; // foil angle (deg)
+        let spotXTarget = 50, spotYTarget = 50; // foil spot (%)
+        let spotXCurrent = 50, spotYCurrent = 50; // animated foil spot (%)
+        let rafId = 0;
+        let running = true;
+
+        function lerpAngle(current, target, t) {
+          // shortest path interpolation in degrees
+          let diff = ((target - current + 540) % 360) - 180;
+          return current + diff * t;
+        }
+
+        function animate(ts = 0) {
+          const ease = 0.10; // tilt smoothing
+          const foilEase = 0.06; // foil smoothing (slower for more relaxed motion)
+          currentX += (targetX - currentX) * ease;
+          currentY += (targetY - currentY) * ease;
           card.style.transform = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
+
+          // Foil smoothing and updates
+          angleCurrent = lerpAngle(angleCurrent, angleTarget, foilEase);
+          spotXCurrent += (spotXTarget - spotXCurrent) * foilEase;
+          spotYCurrent += (spotYTarget - spotYCurrent) * foilEase;
+
+          card.style.setProperty('--angle', angleCurrent.toFixed(1) + 'deg');
+          if (logo) logo.style.setProperty('--angle', angleCurrent.toFixed(1) + 'deg');
+          card.style.setProperty('--spotX', spotXCurrent.toFixed(1) + '%');
+          card.style.setProperty('--spotY', spotYCurrent.toFixed(1) + '%');
           rafId = requestAnimationFrame(animate);
         }
-        function onMove(e){
+
+        function onMove(e) {
           const r = card.getBoundingClientRect();
-          const cx = r.left + r.width/2; const cy = r.top + r.height/2;
-          const dx = (e.clientX - cx) / (r.width/2); const dy = (e.clientY - cy) / (r.height/2);
-          targetX = clamp(-dy * 6, -8, 8); targetY = clamp(dx * 7, -9, 9);
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dx = (e.clientX - cx) / (r.width / 2);
+          const dy = (e.clientY - cy) / (r.height / 2);
+          targetX = clamp(-dy * 6, -8, 8);
+          targetY = clamp(dx * 7, -9, 9);
+          console.log('Tilt:', targetX.toFixed(2), targetY.toFixed(2));
+
+          // Update foil angle globally
+          const angle = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI + 180;
+          angleTarget = angle;
+          // Move specular spot opposite to tilt like a real card
+          spotXTarget = 50 + (-targetY / 9) * 25; // map tilt to percentage
+          spotYTarget = 50 + (targetX / 8) * 18;
         }
-        function reset(){ targetX = 0; targetY = 0; }
+
+        function reset() {
+          targetX = 0; targetY = 0;
+        }
+
         animate();
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseleave', reset);
+
+        // Pause tilt animation when tab hidden
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            running = false;
+            cancelAnimationFrame(rafId);
+          } else {
+            running = true;
+            animate();
+          }
+        });
       })();
       (function initStars() {
         const canvas = document.getElementById('stars');
