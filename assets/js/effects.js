@@ -6,7 +6,7 @@
 
   // Performance and accessibility checks
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isTouch = /Mobi|Android/i.test(navigator.userAgent);
+  const isTouch = /Mobi|Android/i.test(navigator.userAgent) && window.innerWidth <= 768;
 
   // Starfield Background Effect
   function initStarfield() {
@@ -186,7 +186,7 @@
 
   // Balatro-style Card Tilt Effect
   function initCardTilt() {
-    if (reduceMotion || isTouch) return;
+    if (reduceMotion) return;
 
     const cards = document.querySelectorAll('main.card');
     if (!cards.length) return;
