@@ -49,18 +49,9 @@
             <span>xenargs@theairbrushcompany.co.uk</span>
           </a>
         </li>
-        
-        <li>
-          <a class="contact" href="https://github.com/xenargs" target="_blank" rel="noopener noreferrer">
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.58 2 12.24c0 4.52 2.87 8.35 6.85 9.71.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.1-1.49-1.1-1.49-.9-.63.07-.62.07-.62 1 .07 1.52 1.06 1.52 1.06.89 1.57 2.33 1.12 2.9.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.13-4.56-5 0-1.1.38-2 .99-2.7-.1-.26-.43-1.32.09-2.75 0 0 .83-.27 2.73 1.03a9.2 9.2 0 0 1 2.49-.34c.85 0 1.71.11 2.51.34 1.89-1.3 2.72-1.03 2.72-1.03.53 1.43.2 2.49.1 2.75.62.7.99 1.6.99 2.7 0 3.88-2.34 4.73-4.57 4.98.36.31.68.93.68 1.88 0 1.36-.01 2.45-.01 2.79 0 .27.18.59.69.49A10.03 10.03 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z" clip-rule="evenodd"/>
-            </svg>
-            <span>github.com/xenargs</span>
-          </a>
-        </li>
       </ul>
 
-      <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved. <span class="version">v1</span></p>
+      <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved. <span class="version">v1.1</span></p>
     </main>
 
     <script>
@@ -90,6 +81,8 @@
         let baselineGamma = null, baselineBeta = null; // center calibration
         let lastGamma = 0, lastBeta = 0;
         let motionBtn = null; let motionBtnShown = false;
+        let calibrateBtn = null;
+        let tipEl = null; let tipShown = false;
 
         function lerpAngle(current, target, t) {
           // shortest path interpolation in degrees
@@ -215,30 +208,63 @@
           } catch (_) { /* no-op */ }
         }
 
+        function createMotionButton() {
+          if (motionBtnShown) return;
+          motionBtn = document.createElement('button');
+          motionBtn.className = 'motion-btn';
+          motionBtn.type = 'button';
+          motionBtn.textContent = 'Enable motion';
+          card.appendChild(motionBtn);
+          motionBtnShown = true;
+          motionBtn.addEventListener('click', async () => {
+            try {
+              if ('DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const res = await DeviceOrientationEvent.requestPermission();
+                if (res !== 'granted') return;
+              }
+              attachOrientation();
+              attachMotion();
+            } finally {
+              if (motionBtn) motionBtn.remove();
+            }
+          }, { once: true });
+        }
+
+        function createCalibrateButton() {
+          if (calibrateBtn) return;
+          calibrateBtn = document.createElement('button');
+          calibrateBtn.className = 'cal-btn';
+          calibrateBtn.type = 'button';
+          calibrateBtn.textContent = 'Calibrate';
+          card.appendChild(calibrateBtn);
+          calibrateBtn.addEventListener('click', () => {
+            // Set baseline to last observed values
+            baselineGamma = lastGamma;
+            baselineBeta = lastBeta;
+            targetX = 0; targetY = 0;
+          });
+        }
+
+        function showMotionTip() {
+          if (tipShown) return;
+          tipEl = document.createElement('div');
+          tipEl.className = 'motion-tip';
+          tipEl.innerHTML = 'No motion detected. In some browsers (e.g., Brave), enable Motion Sensors in Site settings.';
+          card.appendChild(tipEl);
+          tipShown = true;
+          // Auto-hide after a while
+          setTimeout(() => { if (tipEl) tipEl.remove(); }, 7000);
+        }
+
         if (isTouch) {
+          // Always render controls on touch: enable + calibrate
+          createMotionButton();
+          createCalibrateButton();
           // Prefer orientation if available
           if ('DeviceOrientationEvent' in window) {
             const needsPermission = typeof DeviceOrientationEvent.requestPermission === 'function';
             if (needsPermission) {
-              // iOS flow: show button immediately
-              motionBtn = document.createElement('button');
-              motionBtn.className = 'motion-btn';
-              motionBtn.type = 'button';
-              motionBtn.textContent = 'Enable motion';
-              card.appendChild(motionBtn);
-              motionBtnShown = true;
-              motionBtn.addEventListener('click', async () => {
-                try {
-                  const res = await DeviceOrientationEvent.requestPermission();
-                  if (res === 'granted') {
-                    attachOrientation();
-                    attachMotion();
-                    hasDeviceTilt = true;
-                  }
-                } finally {
-                  if (motionBtn) motionBtn.remove();
-                }
-              }, { once: true });
+              // iOS: wait for user gesture via the button
             } else {
               // Android/others
               attachOrientation();
@@ -248,24 +274,9 @@
             attachMotion();
           }
 
-          // If no events arrive shortly (e.g., Brave blocks sensors), offer manual enable button
+          // If no events arrive shortly (e.g., Brave blocks sensors), show a brief tip
           setTimeout(() => {
-            if (!hasDeviceTilt && !motionBtnShown) {
-              motionBtn = document.createElement('button');
-              motionBtn.className = 'motion-btn';
-              motionBtn.type = 'button';
-              motionBtn.textContent = 'Enable motion';
-              card.appendChild(motionBtn);
-              motionBtnShown = true;
-              motionBtn.addEventListener('click', () => {
-                try {
-                  attachOrientation();
-                  attachMotion();
-                } finally {
-                  if (motionBtn) motionBtn.remove();
-                }
-              }, { once: true });
-            }
+            if (!hasDeviceTilt) showMotionTip();
           }, 1500);
         }
       })();
