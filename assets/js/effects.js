@@ -216,21 +216,22 @@
         currentY += (mouseY - currentY) * 0.1;
         
         // Apply 3D transform with perspective
-        const rotateX = -currentY * 15; // Tilt up/down (increased from 8)
-        const rotateY = currentX * 15;  // Tilt left/right (increased from 8)
-        const translateZ = isHovering ? 30 : 0; // Slight lift when hovering (increased from 20)
+        const rotateX = -currentY * 8; // Tilt up/down (reduced from 15)
+        const rotateY = currentX * 8;  // Tilt left/right (reduced from 15)
+        const translateZ = isHovering ? 15 : 0; // Slight lift when hovering (reduced from 30)
         
-        card.style.transform = `
+        const transform = `
           perspective(1000px)
           rotateX(${rotateX}deg)
           rotateY(${rotateY}deg)
           translateZ(${translateZ}px)
         `;
+        card.style.setProperty('transform', transform, 'important');
         
         // Add subtle shadow based on tilt
-        const shadowX = currentX * 20; // Increased from 10
-        const shadowY = currentY * 20; // Increased from 10
-        const shadowBlur = isHovering ? 40 : 25; // Increased blur
+        const shadowX = currentX * 10; // Reduced from 20
+        const shadowY = currentY * 10; // Reduced from 20
+        const shadowBlur = isHovering ? 25 : 15; // Reduced blur
         
         card.style.boxShadow = `
           0 10px 40px rgba(0,0,0,0.35),
