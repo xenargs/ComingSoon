@@ -29,6 +29,13 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Allow normal flow scrolling on long content pages */
+body.page-long {
+  display: block;
+  place-items: initial;
+  overflow-y: auto;
+}
+
 .bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
 canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .vignette {
@@ -286,6 +293,17 @@ h1 {
 
 @media (max-width: 800px) {
   .team-grid { grid-template-columns: 1fr; }
+}
+
+/* Desktop layout adjustments for long team page */
+@media (min-width: 801px) {
+  .page-long .card {
+    width: min(1000px, 92vw);
+  }
+  .team-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
 }
 
 .contacts {
