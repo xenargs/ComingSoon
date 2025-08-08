@@ -23,7 +23,6 @@ body {
   place-items: center;
   overflow-x: hidden;
   overflow-y: auto;
-  perspective: 900px;
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -148,66 +147,9 @@ canvas#stars {
   border: 1px solid var(--glass-border);
   box-shadow: 0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
   backdrop-filter: blur(14px) saturate(120%);
-  transform-style: preserve-3d;
-  will-change: transform, filter;
-  backface-visibility: hidden;
-  /* Initialize foil effect variables */
-  --spotX: 50%;
-  --spotY: 50%;
-  --angle: 0deg;
-  --foilOpacity: 0.15;
-  overflow: hidden;           /* clip overlays to rounded corners */
-  isolation: isolate;         /* contain blend modes within the card */
 }
 
-.card::before,
-.card::after {
-  content: "";
-  position: absolute;
-  inset: 0;                  /* align with card bounds */
-  pointer-events: none;
-  border-radius: inherit;    /* match rounded corners */
-}
 
-/* Specular highlight + fine noise (soft-light) */
-.card::before {
-  background:
-    radial-gradient(65% 45% at var(--spotX) var(--spotY), rgba(255,255,255,0.12), rgba(255,255,255,0.0) 70%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  background-size: auto, 180px 180px;
-  mix-blend-mode: soft-light;
-  opacity: calc(var(--foilOpacity) + 0.02);
-  transition: opacity 200ms ease;
-}
-
-/* Holographic foil sheen */
-.card::after {
-  background:
-    /* Holographic hues (full 360° coverage) */
-    conic-gradient(from var(--angle) at 50% 50%,
-      #7c3aed55 0deg,
-      #06b6d455 60deg,
-      #f59e0b55 120deg,
-      #06b6d455 180deg,
-      #7c3aed55 240deg,
-      #f59e0b55 300deg,
-      #7c3aed55 360deg
-    ),
-    /* Micro-striations for foil texture */
-    repeating-linear-gradient(
-      calc(var(--angle)),
-      rgba(255,255,255,0.06) 0px,
-      rgba(255,255,255,0.06) 1px,
-      rgba(255,255,255,0.0) 2px,
-      rgba(255,255,255,0.0) 5px
-    );
-  mix-blend-mode: color-dodge;
-  opacity: var(--foilOpacity);
-  filter: saturate(1.15) contrast(1.05) blur(0.15px);
-  transition: opacity 180ms ease;
-}
-
-.card:hover { --foilOpacity: 0.28; }
 
 .logo {
   font-weight: 700;
@@ -220,10 +162,6 @@ canvas#stars {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  /* Initialize foil effect variables */
-  --angle: 0deg;
 }
 
 .logo-text {
@@ -238,36 +176,7 @@ canvas#stars {
   filter: drop-shadow(0 1px 0 rgba(0,0,0,0.12));
 }
 
-/* Foil sweep overlay over the pill */
-.logo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    /* Full coverage holographic sweep */
-    conic-gradient(from var(--angle) at 50% 50%,
-      #7c3aed55 0deg,
-      #06b6d455 60deg,
-      #f59e0b55 120deg,
-      #06b6d455 180deg,
-      #7c3aed55 240deg,
-      #f59e0b55 300deg,
-      #7c3aed55 360deg
-    ),
-    /* Fine striations */
-    repeating-linear-gradient(
-      calc(var(--angle) + 15deg),
-      rgba(255,255,255,0.10) 0px,
-      rgba(255,255,255,0.10) 1px,
-      rgba(255,255,255,0.00) 2px,
-      rgba(255,255,255,0.00) 5px
-    );
-  mix-blend-mode: color-dodge;
-  opacity: 0.35;
-  filter: saturate(1.1) contrast(1.05) blur(0.12px);
-}
+
 
 h1 {
   margin: 14px 0 8px;
@@ -544,9 +453,7 @@ input:focus-visible, button:focus-visible, a:focus-visible {
     background: rgba(255,255,255,0.06);
     box-shadow: 0 8px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
   }
-  /* Tone down foil overlays on mobile */
-  .card::before,
-  .card::after { opacity: 0.10; }
+
   /* Lighter background blobs for perf */
   .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
   .blob.b1 { top: -600vmax; left: -200vmax; width: 500vmax; height: 500vmax; }
@@ -617,6 +524,90 @@ input:focus-visible, button:focus-visible, a:focus-visible {
     opacity: 1; 
     transform: translateY(0) scale(1);
   } 
+}
+
+/* Team page specific styles */
+.info-grid {
+  display: grid;
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+}
+
+.panel h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: #dfe3ee;
+}
+
+.panel p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.panel p:last-child {
+  margin-bottom: 0;
+}
+
+.member-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.member-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.member-points .emoji {
+  margin: 0;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.span-2 {
+  grid-column: 1 / -1;
+}
+
+/* Mobile adjustments for team page */
+@media (max-width: 480px) {
+  .info-grid {
+    gap: 16px;
+    margin: 20px 0;
+  }
+  
+  .panel {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .panel h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .member-points {
+    gap: 10px;
+  }
+  
+  .member-points li {
+    font-size: 13px;
+  }
 }
 
 .card { 

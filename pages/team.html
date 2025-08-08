@@ -8,11 +8,28 @@
     <meta name="description" content="About Xenargs Softworks — a senior team building modern developer tools and automation: CI/CD, AI‑assisted refactors, CLI utilities, cloud‑native workflows, fast DX and reliability." />
     <link rel="canonical" href="https://theairbrushcompany.co.uk/about.html" />
     <meta name="robots" content="index, follow" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="author" content="xenargs softworks" />
+    <meta property="og:title" content="About Us | Developer Tools & Automation Experts | Xenargs" />
+    <meta property="og:description" content="About Xenargs Softworks — a senior team building modern developer tools and automation: CI/CD, AI‑assisted refactors, CLI utilities, cloud‑native workflows, fast DX and reliability." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://theairbrushcompany.co.uk/about.html" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:site_name" content="xenargs softworks" />
+    <meta property="og:image" content="https://theairbrushcompany.co.uk/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Xenargs Softworks — About Us" />
+    <meta name="twitter:title" content="About Us | Developer Tools & Automation Experts | Xenargs" />
+    <meta name="twitter:description" content="About Xenargs Softworks — a senior team building modern developer tools and automation: CI/CD, AI‑assisted refactors, CLI utilities, cloud‑native workflows, fast DX and reliability." />
+    <meta name="twitter:image" content="https://theairbrushcompany.co.uk/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="../assets/css/styles.css" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/assets/images/icon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon32.png" />
@@ -22,6 +39,7 @@
     <link rel="stylesheet" href="../assets/css/styles.css" />
   </head>
   <body class="page-long">
+    <a href="#main" class="skip-link">Skip to main content</a>
     <div class="bg">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="blob b1"></div>
@@ -35,7 +53,7 @@
       <div class="vignette"></div>
     </div>
 
-    <main class="card" role="main">
+    <main id="main" class="card" role="main">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
         <a href="/">Home</a>
         <span class="sep">›</span>
@@ -102,29 +120,7 @@
       if (y) y.textContent = String(new Date().getFullYear());
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      // Tilt effect for card (mouse only)
-      (function initTilt(){
-        if (reduceMotion || isTouch) return;
-        const card = document.querySelector('.card');
-        if (!card) return;
-        const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
-        let targetX = 0, targetY = 0; let currentX = 0, currentY = 0; let rafId = 0;
-        function animate(){
-          const ease = 0.10; currentX += (targetX - currentX) * ease; currentY += (targetY - currentY) * ease;
-          card.style.transform = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
-          rafId = requestAnimationFrame(animate);
-        }
-        function onMove(e){
-          const r = card.getBoundingClientRect();
-          const cx = r.left + r.width/2; const cy = r.top + r.height/2;
-          const dx = (e.clientX - cx) / (r.width/2); const dy = (e.clientY - cy) / (r.height/2);
-          targetX = clamp(-dy * 6, -8, 8); targetY = clamp(dx * 7, -9, 9);
-        }
-        function reset(){ targetX = 0; targetY = 0; }
-        animate();
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseleave', reset);
-      })();
+
       (function initStars() {
         const canvas = document.getElementById('stars');
         if (!canvas || reduceMotion) return;
