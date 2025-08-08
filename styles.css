@@ -20,7 +20,8 @@ body {
   min-height: 100svh;
   display: grid;
   place-items: center;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   perspective: 900px;
 }
 
@@ -287,6 +288,9 @@ h1 {
   border: 1px solid rgba(255,255,255,0.08);
 }
 
+/* Inline CTA link spacing */
+.contact.cta { margin-top: 14px; margin-bottom: 8px; }
+
 .contact:hover {
   transform: translateY(-1px);
   background: rgba(255,255,255,0.08);
@@ -342,6 +346,7 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
+  .contact.cta { margin-top: 16px; margin-bottom: 10px; }
   .contact { padding: 10px 12px; }
   h1 { font-size: clamp(30px, 9vw, 46px); }
   .logo { font-size: clamp(16px, 3.4vw, 18px); }
