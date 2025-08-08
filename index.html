@@ -6,15 +6,22 @@
     <meta name="theme-color" content="#0b1020" />
     <meta name="color-scheme" content="dark" />
     <meta name="robots" content="index, follow" />
-    <title>Coming Soon</title>
-    <meta name="description" content="We're building the toolbox of tomorrow. Get in touch in the meantime." />
+    <title>Xenargs Softworks — Coming Soon</title>
+    <meta name="description" content="Xenargs Softworks builds modern developer tools and automation utilities. Coming soon — say hi at xenargs@theairbrushcompany.co.uk." />
     <link rel="canonical" href="https://theairbrushcompany.co.uk/" />
-    <meta property="og:title" content="Coming Soon" />
-    <meta property="og:description" content="We're building the toolbox of tomorrow. Get in touch in the meantime." />
+    <link rel="alternate" href="https://theairbrushcompany.co.uk/" hreflang="en-gb" />
+    <meta property="og:title" content="Xenargs Softworks — Coming Soon" />
+    <meta property="og:description" content="Xenargs Softworks builds modern developer tools and automation utilities. Coming soon — say hi at xenargs@theairbrushcompany.co.uk." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://theairbrushcompany.co.uk/" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="xenargs softworks" />
     <meta property="og:image" content="https://theairbrushcompany.co.uk/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Xenargs Softworks — Coming Soon" />
+    <meta name="twitter:title" content="Xenargs Softworks — Coming Soon" />
+    <meta name="twitter:description" content="Xenargs Softworks builds modern developer tools and automation utilities. Coming soon — say hi at xenargs@theairbrushcompany.co.uk." />
     <meta name="twitter:image" content="https://theairbrushcompany.co.uk/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="author" content="xenargs softworks" />
@@ -76,13 +83,6 @@
         let spotXTarget = 50, spotYTarget = 50; // foil spot (%)
         let spotXCurrent = 50, spotYCurrent = 50; // animated foil spot (%)
         let rafId = 0;
-        let hasDeviceTilt = false;
-        let hasDeviceMotion = false;
-        let baselineGamma = null, baselineBeta = null; // center calibration
-        let lastGamma = 0, lastBeta = 0;
-        let motionBtn = null; let motionBtnShown = false;
-        let calibrateBtn = null;
-        let tipEl = null; let tipShown = false;
 
         function lerpAngle(current, target, t) {
           // shortest path interpolation in degrees
@@ -98,8 +98,8 @@
           card.style.transform = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
 
           // Foil smoothing and updates
-          if (isTouch && !hasDeviceTilt) {
-            // Fallback: gentle autonomous motion if device tilt not available/granted
+          if (isTouch) {
+            // Mobile: gentle autonomous motion (gyro controls removed)
             const t = ts * 0.001;
             angleTarget = (t * 15) % 360;
             spotXTarget = 50 + Math.sin(t * 0.45) * 10;
@@ -142,142 +142,6 @@
         if (!isTouch) {
           window.addEventListener('mousemove', onMove);
           window.addEventListener('mouseleave', reset);
-        }
-
-        // Device tilt (gyro) for touch devices
-        function onOrientation(ev) {
-          if (!ev) return;
-          let gamma = typeof ev.gamma === 'number' ? ev.gamma : 0; // left-right tilt (-90..90)
-          let beta = typeof ev.beta === 'number' ? ev.beta : 0;   // front-back tilt (-180..180)
-          lastGamma = gamma; lastBeta = beta;
-          if (baselineGamma === null || baselineBeta === null) {
-            baselineGamma = gamma;
-            baselineBeta = beta;
-          }
-          const dGamma = gamma - baselineGamma; // horizontal
-          const dBeta = beta - baselineBeta;     // vertical
-
-          // Map deltas to card tilt degrees (clamped)
-          const targetXDeg = clamp((-dBeta) * (8 / 30), -8, 8);   // forward/back maps to rotateX
-          const targetYDeg = clamp((dGamma) * (9 / 30), -9, 9);   // left/right maps to rotateY
-          targetX = targetXDeg;
-          targetY = targetYDeg;
-
-          // Foil angle points along tilt vector; convert to 0..360
-          const ang = Math.atan2(-targetXDeg, targetYDeg) * 180 / Math.PI;
-          angleTarget = (ang + 360) % 360;
-          // Specular spot responds opposite to tilt like with mouse
-          spotXTarget = 50 + (-targetYDeg / 9) * 25;
-          spotYTarget = 50 + (targetXDeg / 8) * 18;
-          hasDeviceTilt = true;
-        }
-
-        function attachOrientation() {
-          try {
-            window.addEventListener('deviceorientation', onOrientation, true);
-          } catch (_) { /* no-op */ }
-        }
-
-        // DeviceMotion fallback, derive tilt from acceleration including gravity
-        function onMotion(ev) {
-          if (!ev || !ev.accelerationIncludingGravity) return;
-          const g = ev.accelerationIncludingGravity;
-          const ax = typeof g.x === 'number' ? g.x : 0;
-          const ay = typeof g.y === 'number' ? g.y : 0;
-          const az = typeof g.z === 'number' ? g.z : 0;
-          // Compute pitch/roll in degrees; simple mapping for portrait orientation
-          const roll = Math.atan2(ay, az) * 180 / Math.PI;     // left/right
-          const pitch = Math.atan2(-ax, Math.hypot(ay, az)) * 180 / Math.PI; // forward/back
-
-          const targetXDeg = clamp(pitch * (8 / 30), -8, 8);
-          const targetYDeg = clamp(roll * (9 / 30), -9, 9);
-          targetX = targetXDeg;
-          targetY = targetYDeg;
-
-          const ang = Math.atan2(-targetXDeg, targetYDeg) * 180 / Math.PI;
-          angleTarget = (ang + 360) % 360;
-          spotXTarget = 50 + (-targetYDeg / 9) * 25;
-          spotYTarget = 50 + (targetXDeg / 8) * 18;
-          hasDeviceMotion = true;
-          hasDeviceTilt = true;
-        }
-
-        function attachMotion() {
-          try {
-            window.addEventListener('devicemotion', onMotion, true);
-          } catch (_) { /* no-op */ }
-        }
-
-        function createMotionButton() {
-          if (motionBtnShown) return;
-          motionBtn = document.createElement('button');
-          motionBtn.className = 'motion-btn';
-          motionBtn.type = 'button';
-          motionBtn.textContent = 'Enable motion';
-          card.appendChild(motionBtn);
-          motionBtnShown = true;
-          motionBtn.addEventListener('click', async () => {
-            try {
-              if ('DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                const res = await DeviceOrientationEvent.requestPermission();
-                if (res !== 'granted') return;
-              }
-              attachOrientation();
-              attachMotion();
-            } finally {
-              if (motionBtn) motionBtn.remove();
-            }
-          }, { once: true });
-        }
-
-        function createCalibrateButton() {
-          if (calibrateBtn) return;
-          calibrateBtn = document.createElement('button');
-          calibrateBtn.className = 'cal-btn';
-          calibrateBtn.type = 'button';
-          calibrateBtn.textContent = 'Calibrate';
-          card.appendChild(calibrateBtn);
-          calibrateBtn.addEventListener('click', () => {
-            // Set baseline to last observed values
-            baselineGamma = lastGamma;
-            baselineBeta = lastBeta;
-            targetX = 0; targetY = 0;
-          });
-        }
-
-        function showMotionTip() {
-          if (tipShown) return;
-          tipEl = document.createElement('div');
-          tipEl.className = 'motion-tip';
-          tipEl.innerHTML = 'No motion detected. In some browsers (e.g., Brave), enable Motion Sensors in Site settings.';
-          card.appendChild(tipEl);
-          tipShown = true;
-          // Auto-hide after a while
-          setTimeout(() => { if (tipEl) tipEl.remove(); }, 7000);
-        }
-
-        if (isTouch) {
-          // Always render controls on touch: enable + calibrate
-          createMotionButton();
-          createCalibrateButton();
-          // Prefer orientation if available
-          if ('DeviceOrientationEvent' in window) {
-            const needsPermission = typeof DeviceOrientationEvent.requestPermission === 'function';
-            if (needsPermission) {
-              // iOS: wait for user gesture via the button
-            } else {
-              // Android/others
-              attachOrientation();
-              attachMotion();
-            }
-          } else if ('DeviceMotionEvent' in window) {
-            attachMotion();
-          }
-
-          // If no events arrive shortly (e.g., Brave blocks sensors), show a brief tip
-          setTimeout(() => {
-            if (!hasDeviceTilt) showMotionTip();
-          }, 1500);
         }
       })();
 
