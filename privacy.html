@@ -26,6 +26,7 @@
       <div class="blob b1"></div>
       <div class="blob b2"></div>
       <div class="blob b3"></div>
+      <div class="blob b4"></div>
       <div class="vignette"></div>
     </div>
 
@@ -79,8 +80,10 @@
         let width = 0, height = 0, stars = [], rafId = 0;
         const animateStars = !isTouch;
         function resize() {
-          const { innerWidth, innerHeight } = window;
-          width = innerWidth; height = innerHeight;
+          const viewport = window.visualViewport;
+          const innerW = window.innerWidth;
+          const innerH = viewport ? Math.max(window.innerHeight, Math.ceil(viewport.height)) : window.innerHeight;
+          width = innerW; height = innerH;
           canvas.width = Math.floor(width * DPR);
           canvas.height = Math.floor(height * DPR);
           canvas.style.width = width + 'px';
@@ -120,15 +123,39 @@
         } else {
           start();
         }
-        window.addEventListener('resize', () => {
+        const handleResize = () => {
           if (animateStars) cancelAnimationFrame(rafId);
           resize();
           draw();
-        });
+        };
+        window.addEventListener('resize', handleResize);
+        if ('visualViewport' in window) {
+          window.visualViewport.addEventListener('resize', handleResize);
+          window.visualViewport.addEventListener('scroll', handleResize);
+        }
         document.addEventListener('visibilitychange', () => {
           if (!animateStars) return;
           if (document.hidden) cancelAnimationFrame(rafId); else draw();
         });
+      })();
+
+      // Scroll reveal animations
+      (function initReveal(){
+        if (reduceMotion) return;
+        const revealEls = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window) || revealEls.length === 0) {
+          revealEls.forEach(el => el.classList.add('in'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          }
+        }, { root: null, threshold: 0.15 });
+        revealEls.forEach(el => io.observe(el));
       })();
     </script>
   </body>

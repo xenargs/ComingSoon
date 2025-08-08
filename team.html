@@ -27,6 +27,7 @@
       <div class="blob b1"></div>
       <div class="blob b2"></div>
       <div class="blob b3"></div>
+      <div class="blob b4"></div>
       <div class="vignette"></div>
     </div>
 
@@ -41,36 +42,36 @@
 
       <section class="team" aria-label="Team">
         <div class="team-grid">
-          <article class="member">
+          <article class="member reveal">
             <div class="avatar" aria-hidden="true">XS</div>
             <h3 class="member-name">Founder & Lead Engineer</h3>
             <p class="member-role">Engineering • Product</p>
             <ul class="member-points">
-              <li>10+ years building web tooling and automation</li>
-              <li>Shipped production systems used by global teams</li>
-              <li>Passionate about DX, performance, and reliability</li>
+              <li>10+ years building web tooling and automation <span class="emoji" aria-hidden="true">🧰</span></li>
+              <li>Shipped production systems used by global teams <span class="emoji" aria-hidden="true">🌍</span></li>
+              <li>Passionate about DX, performance, and reliability <span class="emoji" aria-hidden="true">❤️</span></li>
             </ul>
           </article>
 
-          <article class="member">
+          <article class="member reveal">
             <div class="avatar" aria-hidden="true">UX</div>
             <h3 class="member-name">Design & Experience</h3>
             <p class="member-role">Product design • Research</p>
             <ul class="member-points">
-              <li>Clean, accessible interfaces with fast paths</li>
-              <li>Prototyping UI flows and micro‑animations</li>
-              <li>Inclusive design and a11y best practices</li>
+              <li>Clean, accessible interfaces with fast paths <span class="emoji" aria-hidden="true">✨</span></li>
+              <li>Prototyping UI flows and micro‑animations <span class="emoji" aria-hidden="true">🎛️</span></li>
+              <li>Inclusive design and a11y best practices <span class="emoji" aria-hidden="true">♿</span></li>
             </ul>
           </article>
 
-          <article class="member">
+          <article class="member reveal">
             <div class="avatar" aria-hidden="true">OP</div>
             <h3 class="member-name">Operations</h3>
             <p class="member-role">DevOps • Support</p>
             <ul class="member-points">
-              <li>CI/CD and cloud infra that scales quietly</li>
-              <li>Security, monitoring, and on‑call hygiene</li>
-              <li>Customer support with fast turnaround</li>
+              <li>CI/CD and cloud infra that scales quietly <span class="emoji" aria-hidden="true">☁️</span></li>
+              <li>Security, monitoring, and on‑call hygiene <span class="emoji" aria-hidden="true">🔐</span></li>
+              <li>Customer support with fast turnaround <span class="emoji" aria-hidden="true">⚡</span></li>
             </ul>
           </article>
         </div>
@@ -115,8 +116,10 @@
         let width = 0, height = 0, stars = [], rafId = 0;
         const animateStars = !isTouch;
         function resize() {
-          const { innerWidth, innerHeight } = window;
-          width = innerWidth; height = innerHeight;
+          const viewport = window.visualViewport;
+          const innerW = window.innerWidth;
+          const innerH = viewport ? Math.max(window.innerHeight, Math.ceil(viewport.height)) : window.innerHeight;
+          width = innerW; height = innerH;
           canvas.width = Math.floor(width * DPR);
           canvas.height = Math.floor(height * DPR);
           canvas.style.width = width + 'px';
@@ -156,15 +159,39 @@
         } else {
           start();
         }
-        window.addEventListener('resize', () => {
+        const handleResize = () => {
           if (animateStars) cancelAnimationFrame(rafId);
           resize();
           draw();
-        });
+        };
+        window.addEventListener('resize', handleResize);
+        if ('visualViewport' in window) {
+          window.visualViewport.addEventListener('resize', handleResize);
+          window.visualViewport.addEventListener('scroll', handleResize);
+        }
         document.addEventListener('visibilitychange', () => {
           if (!animateStars) return;
           if (document.hidden) cancelAnimationFrame(rafId); else draw();
         });
+      })();
+
+      // Scroll reveal animations
+      (function initReveal(){
+        if (reduceMotion) return;
+        const revealEls = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window) || revealEls.length === 0) {
+          revealEls.forEach(el => el.classList.add('in'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          }
+        }, { root: null, threshold: 0.15 });
+        revealEls.forEach(el => io.observe(el));
       })();
     </script>
   </body>

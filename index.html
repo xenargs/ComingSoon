@@ -46,6 +46,7 @@
       <div class="blob b1"></div>
       <div class="blob b2"></div>
       <div class="blob b3"></div>
+      <div class="blob b4"></div>
       <div class="vignette"></div>
     </div>
 
@@ -55,17 +56,17 @@
       <p class="tagline">Air-smooth code. Brush-perfect results.</p>
 
       <ul class="value-props" aria-label="Key benefits">
-        <li>
+        <li class="reveal">
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.5 16.5 5 12l1.5-1.5L9.5 13.5 17.5 5.5 19 7z"/></svg>
-          Faster setup for busy devs
+          Faster setup for busy devs <span class="emoji" aria-hidden="true">⚡️</span>
         </li>
-        <li>
+        <li class="reveal">
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.5 16.5 5 12l1.5-1.5L9.5 13.5 17.5 5.5 19 7z"/></svg>
-          Zero‑config automation helpers
+          Zero‑config automation helpers <span class="emoji" aria-hidden="true">🛠️</span>
         </li>
-        <li>
+        <li class="reveal">
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.5 16.5 5 12l1.5-1.5L9.5 13.5 17.5 5.5 19 7z"/></svg>
-          AI‑assisted refactors
+          AI‑assisted refactors <span class="emoji" aria-hidden="true">🤖</span>
         </li>
       </ul>
 
@@ -73,15 +74,15 @@
         <input aria-label="Email" type="email" name="email" placeholder="you@example.com" required autocomplete="email" />
         <button type="submit">Join the waitlist</button>
       </form>
-      <p class="note">No spam. Unsubscribe anytime.</p>
+      <p class="note">No spam. Unsubscribe anytime. · <a class="privacy" href="/privacy.html">Privacy</a></p>
 
       <ul class="contacts">
-        <li>
+        <li class="reveal">
           <a class="contact" href="mailto:xenargs@theairbrushcompany.co.uk">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
               <path d="M2 6.75A2.75 2.75 0 0 1 4.75 4h14.5A2.75 2.75 0 0 1 22 6.75v10.5A2.75 2.75 0 0 1 19.25 20H4.75A2.75 2.75 0 0 1 2 17.25V6.75Zm2.75-.25a.25.25 0 0 0-.25.25v.37l7.14 4.47c.23.14.49.14.72 0L20.5 7.06v-.31a.25.25 0 0 0-.25-.25H4.75Zm15.5 3.13-6.82 4.27a2.75 2.75 0 0 1-2.86 0L3.75 9.63v7.62c0 .14.11.25.25.25h14.5c.14 0 .25-.11.25-.25V9.63Z"/>
             </svg>
-            <span>xenargs@theairbrushcompany.co.uk</span>
+            <span>xenargs@theairbrushcompany.co.uk <span class="emoji" aria-hidden="true">✉️</span></span>
           </a>
         </li>
       </ul>
@@ -89,12 +90,12 @@
       <section class="faq" aria-label="FAQ">
         <h2>FAQ</h2>
         <dl>
-          <dt>When will you launch?</dt>
-          <dd>We’re inviting early adopters soon. Join the waitlist for first access and updates.</dd>
-          <dt>Who is this for?</dt>
-          <dd>Indie developers and small teams who want streamlined automation and developer tooling.</dd>
-          <dt>How can I get early access?</dt>
-          <dd>Add your email to the waitlist above. We’ll send a private invite when the beta is ready.</dd>
+          <dt class="reveal">When will you launch? <span class="emoji" aria-hidden="true">🚀</span></dt>
+          <dd class="reveal">We’re inviting early adopters soon. Join the waitlist for first access and updates.</dd>
+          <dt class="reveal">Who is this for? <span class="emoji" aria-hidden="true">👩‍💻</span></dt>
+          <dd class="reveal">Indie developers and small teams who want streamlined automation and developer tooling.</dd>
+          <dt class="reveal">How can I get early access? <span class="emoji" aria-hidden="true">✨</span></dt>
+          <dd class="reveal">Add your email to the waitlist above. We’ll send a private invite when the beta is ready.</dd>
         </dl>
       </section>
 
@@ -103,7 +104,7 @@
         <span>Meet the team</span>
       </a>
 
-      <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved. <span class="version">v1.2</span> · <a class="privacy" href="/privacy.html">Privacy</a></p>
+      <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved. <span class="version">v3</span></p>
     </main>
 
     <script>
@@ -204,7 +205,11 @@
         const animateStars = !isTouch; // draw static on touch devices for smoother scroll
 
         function resize() {
-          const { innerWidth, innerHeight } = window;
+          // Use visual viewport height to reduce fixed background cutoff on mobile
+          const viewport = window.visualViewport;
+          const innerW = window.innerWidth;
+          const innerH = viewport ? Math.max(window.innerHeight, Math.ceil(viewport.height)) : window.innerHeight;
+          const { innerWidth, innerHeight } = { innerWidth: innerW, innerHeight: innerH };
           width = innerWidth; height = innerHeight;
           canvas.width = Math.floor(width * DPR);
           canvas.height = Math.floor(height * DPR);
@@ -247,11 +252,16 @@
         } else {
           start();
         }
-        window.addEventListener('resize', () => {
+        const handleResize = () => {
           if (animateStars) cancelAnimationFrame(rafId);
           resize();
           draw();
-        });
+        };
+        window.addEventListener('resize', handleResize);
+        if ('visualViewport' in window) {
+          window.visualViewport.addEventListener('resize', handleResize);
+          window.visualViewport.addEventListener('scroll', handleResize);
+        }
 
         // Pause when tab hidden for perf
         document.addEventListener('visibilitychange', () => {
@@ -262,6 +272,25 @@
             draw();
           }
         });
+      })();
+
+      // Scroll reveal animations
+      (function initReveal(){
+        if (reduceMotion) return;
+        const revealEls = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window) || revealEls.length === 0) {
+          revealEls.forEach(el => el.classList.add('in'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          }
+        }, { root: null, threshold: 0.15 });
+        revealEls.forEach(el => io.observe(el));
       })();
     </script>
 

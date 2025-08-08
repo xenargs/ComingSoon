@@ -51,6 +51,15 @@ canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-
 .blob.b1 { background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 60%); top: -10vmax; left: -10vmax; animation-duration: 30s; }
 .blob.b2 { background: radial-gradient(circle at 70% 40%, var(--accent-2), transparent 60%); bottom: -15vmax; right: -15vmax; animation-duration: 36s; }
 .blob.b3 { background: radial-gradient(circle at 40% 70%, var(--accent-3), transparent 60%); top: 20vmax; right: -25vmax; animation-duration: 42s; }
+/* Additional low, wide glow to avoid cutoff on long scrolls */
+.blob.b4 {
+  background: radial-gradient(circle at 50% 60%, #5eead455, transparent 65%);
+  bottom: -30vmax;
+  left: -20vmax;
+  width: 90vmax;
+  height: 90vmax;
+  animation-duration: 48s;
+}
 
 @keyframes float {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -251,8 +260,7 @@ h1 {
 .faq dt { font-weight: 700; margin-top: 10px; font-size: 14px; }
 .faq dd { margin: 6px 0 0 0; color: var(--muted); font-size: 14px; }
 
-.success { color: #65d46e; }
-.error { color: #ff8080; }
+/* Consolidated in Live region styling section below */
 
 /* Team page */
 .team { margin-top: 16px; }
@@ -304,6 +312,9 @@ h1 {
 
 .contact svg { opacity: 0.9; }
 .contact span { font-size: 15px; }
+
+/* Subtle emoji styling */
+.emoji { margin-left: 6px; opacity: 0.95; }
 
 .small {
   margin-top: 22px;
@@ -369,12 +380,30 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .card::after { opacity: 0.10; }
   /* Lighter background blobs for perf */
   .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
+  .blob.b4 { bottom: -40vmax; width: 110vmax; height: 110vmax; }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
   .contact.cta { margin: 6px 0; }
   .contact { padding: 12px 14px; }
   h1 { font-size: clamp(30px, 9vw, 46px); }
   .logo { font-size: clamp(16px, 3.4vw, 18px); }
+}
+
+/* Page enter and reveal animations (lightweight) */
+@keyframes cardFadeOpacity { from { opacity: 0; } to { opacity: 1; } }
+.card { animation: cardFadeOpacity 420ms ease both; }
+.reveal { opacity: 0; transform: translateY(8px); transition: opacity 500ms ease, transform 500ms ease; }
+.reveal.in { opacity: 1; transform: none; }
+/* Staggers for common groups */
+.value-props li.reveal:nth-child(1) { transition-delay: 80ms; }
+.value-props li.reveal:nth-child(2) { transition-delay: 140ms; }
+.value-props li.reveal:nth-child(3) { transition-delay: 200ms; }
+.contacts li.reveal:nth-child(1) { transition-delay: 120ms; }
+.contacts li.reveal:nth-child(2) { transition-delay: 180ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
 
 
