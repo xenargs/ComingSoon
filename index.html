@@ -41,6 +41,7 @@
     <link rel="mask-icon" href="/assets/images/icon.svg" color="#7c3aed" />
 
     <link rel="stylesheet" href="./assets/css/styles.css" />
+    <script src="./assets/js/effects.js" defer></script>
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -149,114 +150,7 @@
       const y = document.getElementById('year');
       if (y) y.textContent = String(new Date().getFullYear());
 
-      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      // Only disable on primary touch devices, not touch-capable desktops
-      const isTouch = /Mobi|Android/i.test(navigator.userAgent);
-
-
-
-      // Lightweight starfield background
-      (function initStars() {
-        const canvas = document.getElementById('stars');
-        if (!canvas || reduceMotion) return;
-        const ctx = canvas.getContext('2d');
-        const DPR = Math.min(window.devicePixelRatio || 1, 2);
-        let width = 0, height = 0, stars = [], rafId = 0;
-        const animateStars = !isTouch; // draw static on touch devices for smoother scroll
-
-        function resize() {
-          // Use visual viewport height to reduce fixed background cutoff on mobile
-          const viewport = window.visualViewport;
-          const innerW = window.innerWidth;
-          const innerH = viewport ? Math.max(window.innerHeight, Math.ceil(viewport.height)) : window.innerHeight;
-          const { innerWidth, innerHeight } = { innerWidth: innerW, innerHeight: innerH };
-          
-          // On mobile, use larger canvas dimensions to prevent cutoff
-          const isMobile = innerWidth <= 480;
-          const isTablet = innerWidth > 480 && innerWidth <= 768;
-          if (isMobile) {
-            width = innerWidth * 3; // 300vw for extra coverage
-            height = innerHeight * 4; // 400vh for extra coverage
-            canvas.style.width = (innerWidth * 3) + 'px';
-            canvas.style.height = (innerHeight * 4) + 'px';
-            canvas.style.left = (-innerWidth) + 'px';
-            canvas.style.top = (-innerHeight * 2) + 'px';
-          } else if (isTablet) {
-            width = innerWidth * 2.5; // 250vw for tablet
-            height = innerHeight * 3; // 300vh for tablet
-            canvas.style.width = (innerWidth * 2.5) + 'px';
-            canvas.style.height = (innerHeight * 3) + 'px';
-            canvas.style.left = (-innerWidth * 0.75) + 'px';
-            canvas.style.top = (-innerHeight * 1.5) + 'px';
-          } else {
-            width = innerWidth * 2; // 200vw for desktop
-            height = innerHeight * 2; // 200vh for desktop
-            canvas.style.width = (innerWidth * 2) + 'px';
-            canvas.style.height = (innerHeight * 2) + 'px';
-            canvas.style.left = (-innerWidth / 2) + 'px';
-            canvas.style.top = (-innerHeight) + 'px';
-          }
-          
-          canvas.width = Math.floor(width * DPR);
-          canvas.height = Math.floor(height * DPR);
-          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-          const area = width * height;
-          const isSmall = width <= 480;
-          const base = isSmall ? (area / 16000) : (area / 10000);
-          const cap = isSmall ? (isTouch ? 90 : 130) : (isTouch ? 140 : 220);
-          const starCount = Math.min(Math.floor(base), cap);
-          stars = Array.from({ length: starCount }, () => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            r: Math.random() * 1.2 + 0.2,
-            a: Math.random() * Math.PI * 2,
-            s: Math.random() * 0.4 + 0.05,
-          }));
-        }
-
-        function draw() {
-          ctx.clearRect(0, 0, width, height);
-          ctx.fillStyle = 'rgba(255,255,255,0.9)';
-          for (const star of stars) {
-            if (animateStars) star.a += star.s * 0.02;
-            const twinkle = animateStars ? (0.3 + Math.abs(Math.sin(star.a)) * 0.7) : 0.6;
-            ctx.globalAlpha = twinkle * 0.7;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.globalAlpha = 1;
-          if (animateStars) rafId = requestAnimationFrame(draw);
-        }
-
-        resize();
-        const start = () => { draw(); };
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(start, { timeout: 800 });
-        } else {
-          start();
-        }
-        const handleResize = () => {
-          if (animateStars) cancelAnimationFrame(rafId);
-          resize();
-          draw();
-        };
-        window.addEventListener('resize', handleResize);
-        if ('visualViewport' in window) {
-          window.visualViewport.addEventListener('resize', handleResize);
-          window.visualViewport.addEventListener('scroll', handleResize);
-        }
-
-        // Pause when tab hidden for perf
-        document.addEventListener('visibilitychange', () => {
-          if (!animateStars) return;
-          if (document.hidden) {
-            cancelAnimationFrame(rafId);
-          } else {
-            draw();
-          }
-        });
-      })();
+      // Effects are now handled by effects.js
 
       // Scroll reveal animations
       (function initReveal(){

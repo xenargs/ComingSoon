@@ -37,6 +37,7 @@
     <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png" />
 
     <link rel="stylesheet" href="../assets/css/styles.css" />
+    <script src="../assets/js/effects.js" defer></script>
   </head>
   <body class="page-long">
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -118,92 +119,7 @@
     <script>
       const y = document.getElementById('year');
       if (y) y.textContent = String(new Date().getFullYear());
-      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-      (function initStars() {
-        const canvas = document.getElementById('stars');
-        if (!canvas || reduceMotion) return;
-        const ctx = canvas.getContext('2d');
-        const DPR = Math.min(window.devicePixelRatio || 1, 2);
-        let width = 0, height = 0, stars = [], rafId = 0;
-        const animateStars = !isTouch;
-        function resize() {
-          const viewport = window.visualViewport;
-          const innerW = window.innerWidth;
-          const innerH = viewport ? Math.max(window.innerHeight, Math.ceil(viewport.height)) : window.innerHeight;
-          
-          // Ensure canvas covers entire viewport with extra margin for scrolling
-          const isMobile = innerW <= 480;
-          if (isMobile) {
-            width = innerW * 3; // 300vw for extra coverage
-            height = innerH * 4; // 400vh for extra coverage
-            canvas.style.width = (innerW * 3) + 'px';
-            canvas.style.height = (innerH * 4) + 'px';
-            canvas.style.left = (-innerW) + 'px'; // Center the canvas
-            canvas.style.top = (-innerH * 1.5) + 'px'; // Position to cover top and bottom
-          } else {
-            // For desktop, also ensure full coverage
-            width = innerW * 2; // 200vw for desktop
-            height = innerH * 2; // 200vh for desktop
-            canvas.style.width = (innerW * 2) + 'px';
-            canvas.style.height = (innerH * 2) + 'px';
-            canvas.style.left = (-innerW / 2) + 'px'; // Center the canvas
-            canvas.style.top = (-innerH / 2) + 'px'; // Center the canvas
-          }
-          
-          canvas.width = Math.floor(width * DPR);
-          canvas.height = Math.floor(height * DPR);
-          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-          const area = width * height;
-          const isSmall = width <= 480;
-          const base = isSmall ? (area / 16000) : (area / 10000);
-          const cap = isSmall ? (isTouch ? 90 : 130) : (isTouch ? 140 : 220);
-          const count = Math.min(Math.floor(base), cap);
-          stars = Array.from({ length: count }, () => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            r: Math.random() * 1.2 + 0.2,
-            a: Math.random() * Math.PI * 2,
-            s: Math.random() * 0.4 + 0.05,
-          }));
-        }
-        function draw() {
-          ctx.clearRect(0, 0, width, height);
-          ctx.fillStyle = 'rgba(255,255,255,0.9)';
-          for (const star of stars) {
-            if (animateStars) star.a += star.s * 0.02;
-            const twinkle = animateStars ? (0.3 + Math.abs(Math.sin(star.a)) * 0.7) : 0.6;
-            ctx.globalAlpha = twinkle * 0.7;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.globalAlpha = 1;
-          if (animateStars) rafId = requestAnimationFrame(draw);
-        }
-        resize();
-        const start = () => { draw(); };
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(start, { timeout: 800 });
-        } else {
-          start();
-        }
-        const handleResize = () => {
-          if (animateStars) cancelAnimationFrame(rafId);
-          resize();
-          draw();
-        };
-        window.addEventListener('resize', handleResize);
-        if ('visualViewport' in window) {
-          window.visualViewport.addEventListener('resize', handleResize);
-          window.visualViewport.addEventListener('scroll', handleResize);
-        }
-        document.addEventListener('visibilitychange', () => {
-          if (!animateStars) return;
-          if (document.hidden) cancelAnimationFrame(rafId); else draw();
-        });
-      })();
+      // Effects are now handled by effects.js
 
       // Scroll reveal animations
       (function initReveal(){
