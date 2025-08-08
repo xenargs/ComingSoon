@@ -285,6 +285,19 @@ h1 {
   color: var(--muted);
   font-size: 13px;
 }
+.small a.privacy { color: var(--muted); text-decoration: underline; }
+
+/* Focus visibility */
+:focus-visible {
+  outline: 2px solid #7c9cff;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px; }
+
+/* Live region styling for form messages */
+.success { color: #65d46e; }
+.error { color: #ff8080; }
 
 .small .version {
   margin-left: 10px;
