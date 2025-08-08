@@ -249,6 +249,23 @@ h1 {
 .success { color: #65d46e; }
 .error { color: #ff8080; }
 
+/* Team page */
+.team { margin-top: 16px; }
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.member { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; }
+.avatar { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, #7c3aed44, #06b6d444); font-weight: 800; }
+.member-name { margin: 10px 0 2px; font-size: 16px; }
+.member-role { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+.member-points { margin: 0; padding-left: 18px; color: #cfd3df; font-size: 14px; }
+
+@media (max-width: 800px) {
+  .team-grid { grid-template-columns: 1fr; }
+}
+
 .contacts {
   list-style: none;
   margin: 18px 0 12px;
