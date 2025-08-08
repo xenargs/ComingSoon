@@ -86,8 +86,10 @@
         let spotXCurrent = 50, spotYCurrent = 50; // animated foil spot (%)
         let rafId = 0;
         let hasDeviceTilt = false;
+        let hasDeviceMotion = false;
         let baselineGamma = null, baselineBeta = null; // center calibration
         let lastGamma = 0, lastBeta = 0;
+        let motionBtn = null; let motionBtnShown = false;
 
         function lerpAngle(current, target, t) {
           // shortest path interpolation in degrees
@@ -183,34 +185,88 @@
           } catch (_) { /* no-op */ }
         }
 
-        if (isTouch && 'DeviceOrientationEvent' in window) {
-          // iOS 13+ requires a user gesture to grant motion permission
-          const needsPermission = typeof DeviceOrientationEvent.requestPermission === 'function';
-          if (needsPermission) {
-            const btn = document.createElement('button');
-            btn.className = 'motion-btn';
-            btn.type = 'button';
-            btn.textContent = 'Enable motion';
-            card.appendChild(btn);
-            btn.addEventListener('click', async () => {
-              try {
-                const res = await DeviceOrientationEvent.requestPermission();
-                if (res === 'granted') {
-                  attachOrientation();
-                  hasDeviceTilt = true;
-                  btn.remove();
-                } else {
-                  // keep fallback animation; hide button to avoid nagging
-                  btn.remove();
+        // DeviceMotion fallback, derive tilt from acceleration including gravity
+        function onMotion(ev) {
+          if (!ev || !ev.accelerationIncludingGravity) return;
+          const g = ev.accelerationIncludingGravity;
+          const ax = typeof g.x === 'number' ? g.x : 0;
+          const ay = typeof g.y === 'number' ? g.y : 0;
+          const az = typeof g.z === 'number' ? g.z : 0;
+          // Compute pitch/roll in degrees; simple mapping for portrait orientation
+          const roll = Math.atan2(ay, az) * 180 / Math.PI;     // left/right
+          const pitch = Math.atan2(-ax, Math.hypot(ay, az)) * 180 / Math.PI; // forward/back
+
+          const targetXDeg = clamp(pitch * (8 / 30), -8, 8);
+          const targetYDeg = clamp(roll * (9 / 30), -9, 9);
+          targetX = targetXDeg;
+          targetY = targetYDeg;
+
+          const ang = Math.atan2(-targetXDeg, targetYDeg) * 180 / Math.PI;
+          angleTarget = (ang + 360) % 360;
+          spotXTarget = 50 + (-targetYDeg / 9) * 25;
+          spotYTarget = 50 + (targetXDeg / 8) * 18;
+          hasDeviceMotion = true;
+          hasDeviceTilt = true;
+        }
+
+        function attachMotion() {
+          try {
+            window.addEventListener('devicemotion', onMotion, true);
+          } catch (_) { /* no-op */ }
+        }
+
+        if (isTouch) {
+          // Prefer orientation if available
+          if ('DeviceOrientationEvent' in window) {
+            const needsPermission = typeof DeviceOrientationEvent.requestPermission === 'function';
+            if (needsPermission) {
+              // iOS flow: show button immediately
+              motionBtn = document.createElement('button');
+              motionBtn.className = 'motion-btn';
+              motionBtn.type = 'button';
+              motionBtn.textContent = 'Enable motion';
+              card.appendChild(motionBtn);
+              motionBtnShown = true;
+              motionBtn.addEventListener('click', async () => {
+                try {
+                  const res = await DeviceOrientationEvent.requestPermission();
+                  if (res === 'granted') {
+                    attachOrientation();
+                    attachMotion();
+                    hasDeviceTilt = true;
+                  }
+                } finally {
+                  if (motionBtn) motionBtn.remove();
                 }
-              } catch (_) {
-                btn.remove();
-              }
-            }, { once: true });
-          } else {
-            // Android/other: no explicit permission required in most cases
-            attachOrientation();
+              }, { once: true });
+            } else {
+              // Android/others
+              attachOrientation();
+              attachMotion();
+            }
+          } else if ('DeviceMotionEvent' in window) {
+            attachMotion();
           }
+
+          // If no events arrive shortly (e.g., Brave blocks sensors), offer manual enable button
+          setTimeout(() => {
+            if (!hasDeviceTilt && !motionBtnShown) {
+              motionBtn = document.createElement('button');
+              motionBtn.className = 'motion-btn';
+              motionBtn.type = 'button';
+              motionBtn.textContent = 'Enable motion';
+              card.appendChild(motionBtn);
+              motionBtnShown = true;
+              motionBtn.addEventListener('click', () => {
+                try {
+                  attachOrientation();
+                  attachMotion();
+                } finally {
+                  if (motionBtn) motionBtn.remove();
+                }
+              }, { once: true });
+            }
+          }, 1500);
         }
       })();
 
