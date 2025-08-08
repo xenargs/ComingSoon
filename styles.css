@@ -11,6 +11,7 @@
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+html, body { overscroll-behavior: none; }
 
 body {
   margin: 0;
@@ -23,9 +24,12 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   perspective: 900px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; contain: layout paint; }
 canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .vignette {
   position: absolute;
@@ -337,18 +341,38 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .contact { transition: none; }
 }
 
+/* Disable hover-only effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .contact:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
 @media (max-width: 480px) {
-  body { display: block; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  body {
+    display: block;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  }
   .card {
-    width: min(560px, 92vw);
+    width: min(560px, 90vw);
     padding: 22px 18px;
     border-radius: 18px;
-    margin: 16px auto;
+    margin: 20px auto;
+    /* Reduce heavy effects on mobile for smoother scroll */
+    backdrop-filter: none;
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
   }
+  /* Tone down foil overlays on mobile */
+  .card::before,
+  .card::after { opacity: 0.10; }
+  /* Lighter background blobs for perf */
+  .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
   .contact.cta { margin: 6px 0; }
-  .contact { padding: 10px 12px; }
+  .contact { padding: 12px 14px; }
   h1 { font-size: clamp(30px, 9vw, 46px); }
   .logo { font-size: clamp(16px, 3.4vw, 18px); }
 }

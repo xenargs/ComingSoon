@@ -112,15 +112,15 @@
       if (y) y.textContent = String(new Date().getFullYear());
 
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
       // Smooth parallax tilt with easing + foil highlight mapping
       (function initTilt() {
-        if (reduceMotion) return;
+        if (reduceMotion || isTouch) return;
         const card = document.querySelector('.card');
         if (!card) return;
         const logo = document.querySelector('.logo');
         const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
-        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
         let targetX = 0, targetY = 0; // desired tilt angles
         let currentX = 0, currentY = 0; // animated tilt angles
@@ -144,13 +144,7 @@
           card.style.transform = `rotateX(${currentX.toFixed(3)}deg) rotateY(${currentY.toFixed(3)}deg)`;
 
           // Foil smoothing and updates
-          if (isTouch) {
-            // Mobile: gentle autonomous motion (gyro controls removed)
-            const t = ts * 0.001;
-            angleTarget = (t * 15) % 360;
-            spotXTarget = 50 + Math.sin(t * 0.45) * 10;
-            spotYTarget = 50 + Math.cos(t * 0.60) * 8;
-          }
+          // Mobile tilt disabled above; foil motion only runs on pointer devices
 
           angleCurrent = lerpAngle(angleCurrent, angleTarget, foilEase);
           spotXCurrent += (spotXTarget - spotXCurrent) * foilEase;
@@ -185,10 +179,8 @@
         }
 
         animate();
-        if (!isTouch) {
-          window.addEventListener('mousemove', onMove);
-          window.addEventListener('mouseleave', reset);
-        }
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseleave', reset);
 
         // Pause tilt animation when tab hidden
         document.addEventListener('visibilitychange', () => {
@@ -209,6 +201,7 @@
         const ctx = canvas.getContext('2d');
         const DPR = Math.min(window.devicePixelRatio || 1, 2);
         let width = 0, height = 0, stars = [], rafId = 0;
+        const animateStars = !isTouch; // draw static on touch devices for smoother scroll
 
         function resize() {
           const { innerWidth, innerHeight } = window;
@@ -220,8 +213,8 @@
           ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
           const area = width * height;
           const isSmall = width <= 480;
-          const base = isSmall ? (area / 14000) : (area / 9000);
-          const cap = isSmall ? 140 : 240;
+          const base = isSmall ? (area / 16000) : (area / 10000);
+          const cap = isSmall ? (isTouch ? 90 : 130) : (isTouch ? 140 : 220);
           const starCount = Math.min(Math.floor(base), cap);
           stars = Array.from({ length: starCount }, () => ({
             x: Math.random() * width,
@@ -236,15 +229,15 @@
           ctx.clearRect(0, 0, width, height);
           ctx.fillStyle = 'rgba(255,255,255,0.9)';
           for (const star of stars) {
-            star.a += star.s * 0.02;
-            const twinkle = 0.3 + Math.abs(Math.sin(star.a)) * 0.7;
+            if (animateStars) star.a += star.s * 0.02;
+            const twinkle = animateStars ? (0.3 + Math.abs(Math.sin(star.a)) * 0.7) : 0.6;
             ctx.globalAlpha = twinkle * 0.7;
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
             ctx.fill();
           }
           ctx.globalAlpha = 1;
-          rafId = requestAnimationFrame(draw);
+          if (animateStars) rafId = requestAnimationFrame(draw);
         }
 
         resize();
@@ -255,13 +248,14 @@
           start();
         }
         window.addEventListener('resize', () => {
-          cancelAnimationFrame(rafId);
+          if (animateStars) cancelAnimationFrame(rafId);
           resize();
           draw();
         });
 
         // Pause when tab hidden for perf
         document.addEventListener('visibilitychange', () => {
+          if (!animateStars) return;
           if (document.hidden) {
             cancelAnimationFrame(rafId);
           } else {

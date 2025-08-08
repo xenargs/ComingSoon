@@ -83,9 +83,10 @@
       const y = document.getElementById('year');
       if (y) y.textContent = String(new Date().getFullYear());
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
       // Tilt effect for card (mouse only)
       (function initTilt(){
-        if (reduceMotion) return;
+        if (reduceMotion || isTouch) return;
         const card = document.querySelector('.card');
         if (!card) return;
         const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
@@ -112,6 +113,7 @@
         const ctx = canvas.getContext('2d');
         const DPR = Math.min(window.devicePixelRatio || 1, 2);
         let width = 0, height = 0, stars = [], rafId = 0;
+        const animateStars = !isTouch;
         function resize() {
           const { innerWidth, innerHeight } = window;
           width = innerWidth; height = innerHeight;
@@ -122,8 +124,8 @@
           ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
           const area = width * height;
           const isSmall = width <= 480;
-          const base = isSmall ? (area / 14000) : (area / 9000);
-          const cap = isSmall ? 140 : 240;
+          const base = isSmall ? (area / 16000) : (area / 10000);
+          const cap = isSmall ? (isTouch ? 90 : 130) : (isTouch ? 140 : 220);
           const count = Math.min(Math.floor(base), cap);
           stars = Array.from({ length: count }, () => ({
             x: Math.random() * width,
@@ -137,15 +139,15 @@
           ctx.clearRect(0, 0, width, height);
           ctx.fillStyle = 'rgba(255,255,255,0.9)';
           for (const star of stars) {
-            star.a += star.s * 0.02;
-            const twinkle = 0.3 + Math.abs(Math.sin(star.a)) * 0.7;
+            if (animateStars) star.a += star.s * 0.02;
+            const twinkle = animateStars ? (0.3 + Math.abs(Math.sin(star.a)) * 0.7) : 0.6;
             ctx.globalAlpha = twinkle * 0.7;
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
             ctx.fill();
           }
           ctx.globalAlpha = 1;
-          rafId = requestAnimationFrame(draw);
+          if (animateStars) rafId = requestAnimationFrame(draw);
         }
         resize();
         const start = () => { draw(); };
@@ -155,11 +157,12 @@
           start();
         }
         window.addEventListener('resize', () => {
-          cancelAnimationFrame(rafId);
+          if (animateStars) cancelAnimationFrame(rafId);
           resize();
           draw();
         });
         document.addEventListener('visibilitychange', () => {
+          if (!animateStars) return;
           if (document.hidden) cancelAnimationFrame(rafId); else draw();
         });
       })();
