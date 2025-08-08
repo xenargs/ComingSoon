@@ -56,9 +56,9 @@ canvas#stars {
 }
 .vignette {
   position: absolute;
-  inset: -100%;
+  inset: -200%;
   pointer-events: none;
-  background: radial-gradient(300% 300% at 50% 20%, transparent 0 60%, rgba(0,0,0,0.55) 100%);
+  background: radial-gradient(500% 500% at 50% 20%, transparent 0 70%, rgba(0,0,0,0.55) 100%);
 }
 
 .blob {
@@ -71,9 +71,9 @@ canvas#stars {
   mix-blend-mode: screen;
   animation: float 28s ease-in-out infinite;
 }
-.blob.b1 { background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 60%); top: -100vmax; left: -60vmax; width: 160vmax; height: 160vmax; animation-duration: 30s; }
-.blob.b2 { background: radial-gradient(circle at 70% 40%, var(--accent-2), transparent 60%); bottom: -100vmax; right: -60vmax; width: 160vmax; height: 160vmax; animation-duration: 36s; }
-.blob.b3 { background: radial-gradient(circle at 40% 70%, var(--accent-3), transparent 60%); top: 100vmax; right: -80vmax; width: 160vmax; height: 160vmax; animation-duration: 42s; }
+.blob.b1 { background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 60%); top: -300vmax; left: -100vmax; width: 300vmax; height: 300vmax; animation-duration: 30s; }
+.blob.b2 { background: radial-gradient(circle at 70% 40%, var(--accent-2), transparent 60%); bottom: -150vmax; right: -100vmax; width: 250vmax; height: 250vmax; animation-duration: 36s; }
+.blob.b3 { background: radial-gradient(circle at 40% 70%, var(--accent-3), transparent 60%); top: 150vmax; right: -120vmax; width: 250vmax; height: 250vmax; animation-duration: 42s; }
 /* Additional dynamic lights for better visibility */
 .blob.b6 {
   background: radial-gradient(circle at 40% 40%, #f59e0b55, transparent 70%);
@@ -341,7 +341,7 @@ h1 {
   .page-long .card {
     width: min(1200px, 96vw);
     padding: 50px 50px 40px;
-    margin: 6vh auto;
+    margin: 4vh auto;
     max-height: none;
     overflow-y: visible;
   }
@@ -350,7 +350,7 @@ h1 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
-    align-items: start;
+    align-items: stretch;
     margin-top: 24px;
   }
   .panel {
@@ -481,15 +481,15 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .card::after { opacity: 0.10; }
   /* Lighter background blobs for perf */
   .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
-  .blob.b1 { top: -200vmax; left: -120vmax; width: 240vmax; height: 240vmax; }
-  .blob.b2 { bottom: -200vmax; right: -120vmax; width: 240vmax; height: 240vmax; }
-  .blob.b3 { top: 200vmax; right: -160vmax; width: 240vmax; height: 240vmax; }
-  .blob.b4 { bottom: -300vmax; left: -80vmax; width: 280vmax; height: 280vmax; }
-  .blob.b5 { bottom: -320vmax; right: -88vmax; width: 280vmax; height: 280vmax; }
-  .blob.b6 { top: -240vmax; right: -160vmax; width: 240vmax; height: 240vmax; }
-  .blob.b7 { bottom: -280vmax; left: -140vmax; width: 280vmax; height: 280vmax; }
-  .blob.b8 { top: 240vmax; left: -180vmax; width: 240vmax; height: 240vmax; }
-  .vignette { inset: -200%; background: radial-gradient(400% 400% at 50% 20%, transparent 0 65%, rgba(0,0,0,0.55) 100%); }
+  .blob.b1 { top: -500vmax; left: -200vmax; width: 500vmax; height: 500vmax; }
+  .blob.b2 { bottom: -400vmax; right: -200vmax; width: 400vmax; height: 400vmax; }
+  .blob.b3 { top: 300vmax; right: -250vmax; width: 400vmax; height: 400vmax; }
+  .blob.b4 { bottom: -500vmax; left: -150vmax; width: 450vmax; height: 450vmax; }
+  .blob.b5 { bottom: -550vmax; right: -180vmax; width: 450vmax; height: 450vmax; }
+  .blob.b6 { top: -400vmax; right: -250vmax; width: 400vmax; height: 400vmax; }
+  .blob.b7 { bottom: -450vmax; left: -220vmax; width: 450vmax; height: 450vmax; }
+  .blob.b8 { top: 350vmax; left: -280vmax; width: 400vmax; height: 400vmax; }
+  .vignette { inset: -500%; background: radial-gradient(600% 600% at 50% 20%, transparent 0 75%, rgba(0,0,0,0.55) 100%); }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
   .contact.cta { margin: 6px 0; }
