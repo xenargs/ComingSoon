@@ -37,7 +37,23 @@ body.page-long {
 }
 
 .bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
-canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+canvas#stars { 
+  position: absolute; 
+  inset: 0; 
+  width: 100%; 
+  height: 100%; 
+  pointer-events: none; 
+}
+
+/* Mobile-specific starfield expansion to prevent cutoff */
+@media (max-width: 480px) {
+  canvas#stars {
+    width: 200vw;
+    height: 300vh;
+    left: -50vw;
+    top: -100vh;
+  }
+}
 .vignette {
   position: absolute;
   inset: -50%;
@@ -58,6 +74,31 @@ canvas#stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-
 .blob.b1 { background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 60%); top: -50vmax; left: -30vmax; animation-duration: 30s; }
 .blob.b2 { background: radial-gradient(circle at 70% 40%, var(--accent-2), transparent 60%); bottom: -50vmax; right: -30vmax; animation-duration: 36s; }
 .blob.b3 { background: radial-gradient(circle at 40% 70%, var(--accent-3), transparent 60%); top: 50vmax; right: -40vmax; animation-duration: 42s; }
+/* Additional dynamic lights for better visibility */
+.blob.b6 {
+  background: radial-gradient(circle at 40% 40%, #f59e0b55, transparent 70%);
+  top: -80vmax;
+  right: -60vmax;
+  width: 120vmax;
+  height: 120vmax;
+  animation-duration: 44s;
+}
+.blob.b7 {
+  background: radial-gradient(circle at 60% 30%, #06b6d455, transparent 70%);
+  bottom: -100vmax;
+  left: -50vmax;
+  width: 130vmax;
+  height: 130vmax;
+  animation-duration: 52s;
+}
+.blob.b8 {
+  background: radial-gradient(circle at 20% 80%, #7c3aed55, transparent 70%);
+  top: 80vmax;
+  left: -70vmax;
+  width: 110vmax;
+  height: 110vmax;
+  animation-duration: 38s;
+}
 /* Additional low, wide glow to avoid cutoff on long scrolls */
 .blob.b4 {
   background: radial-gradient(circle at 50% 60%, #5eead455, transparent 65%);
@@ -298,25 +339,25 @@ h1 {
 /* Desktop layout adjustments for long team page */
 @media (min-width: 1024px) {
   .page-long .card {
-    width: min(800px, 92vw);
-    padding: 36px 36px 28px;
-    max-height: 85vh;
-    overflow-y: auto;
-    margin: 7.5vh auto;
+    width: min(900px, 94vw);
+    padding: 40px 40px 32px;
+    margin: 8vh auto;
+    max-height: none;
+    overflow-y: visible;
   }
   /* Apple-inspired info grid */
   .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
     align-items: start;
-    margin-top: 14px;
+    margin-top: 18px;
   }
   .panel {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    padding: 16px 16px 14px;
+    border-radius: 16px;
+    padding: 20px 20px 18px;
   }
   .span-2 { grid-column: 1 / -1; }
 }
@@ -428,8 +469,11 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline-offset: 3px
   .card::after { opacity: 0.10; }
   /* Lighter background blobs for perf */
   .blob { filter: blur(40px); opacity: 0.35; animation-duration: 60s; }
-  .blob.b4 { bottom: -160vmax; width: 180vmax; height: 180vmax; }
-  .blob.b5 { bottom: -176vmax; right: -56vmax; width: 180vmax; height: 180vmax; }
+  .blob.b4 { bottom: -200vmax; width: 220vmax; height: 220vmax; }
+  .blob.b5 { bottom: -220vmax; right: -70vmax; width: 220vmax; height: 220vmax; }
+  .blob.b6 { top: -120vmax; right: -80vmax; width: 160vmax; height: 160vmax; }
+  .blob.b7 { bottom: -140vmax; left: -70vmax; width: 180vmax; height: 180vmax; }
+  .blob.b8 { top: 120vmax; left: -90vmax; width: 150vmax; height: 150vmax; }
   .waitlist { flex-direction: column; }
   .waitlist button { width: 100%; }
   .contact.cta { margin: 6px 0; }

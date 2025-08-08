@@ -48,6 +48,9 @@
       <div class="blob b3"></div>
       <div class="blob b4"></div>
       <div class="blob b5"></div>
+      <div class="blob b6"></div>
+      <div class="blob b7"></div>
+      <div class="blob b8"></div>
       <div class="vignette"></div>
     </div>
 
@@ -211,11 +214,27 @@
           const innerW = window.innerWidth;
           const innerH = viewport ? Math.max(window.innerHeight, Math.ceil(viewport.height)) : window.innerHeight;
           const { innerWidth, innerHeight } = { innerWidth: innerW, innerHeight: innerH };
-          width = innerWidth; height = innerHeight;
+          
+          // On mobile, use larger canvas dimensions to prevent cutoff
+          const isMobile = innerWidth <= 480;
+          if (isMobile) {
+            width = innerWidth * 2; // 200vw
+            height = innerHeight * 3; // 300vh
+            canvas.style.width = (innerWidth * 2) + 'px';
+            canvas.style.height = (innerHeight * 3) + 'px';
+            canvas.style.left = (-innerWidth / 2) + 'px';
+            canvas.style.top = (-innerHeight) + 'px';
+          } else {
+            width = innerWidth;
+            height = innerHeight;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            canvas.style.left = '0px';
+            canvas.style.top = '0px';
+          }
+          
           canvas.width = Math.floor(width * DPR);
           canvas.height = Math.floor(height * DPR);
-          canvas.style.width = width + 'px';
-          canvas.style.height = height + 'px';
           ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
           const area = width * height;
           const isSmall = width <= 480;
