@@ -199,6 +199,56 @@ h1 {
   font-size: clamp(16px, 2.8vw, 18px);
 }
 
+.value-props {
+  list-style: none;
+  margin: 12px 0 18px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.value-props li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cfd3df;
+  font-size: 14px;
+  opacity: 0.95;
+}
+.value-props svg { opacity: 0.9; }
+
+.waitlist {
+  display: flex;
+  gap: 8px;
+  margin: 6px 0 6px;
+}
+.waitlist input[type="email"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+}
+.waitlist button {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, #ffffff14, #ffffff08);
+  color: var(--text);
+  cursor: pointer;
+}
+.note { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
+
+.faq { margin-top: 18px; }
+.faq h2 { font-size: 18px; margin: 6px 0 10px; color: #dfe3ee; }
+.faq dl { margin: 0; }
+.faq dt { font-weight: 700; margin-top: 10px; font-size: 14px; }
+.faq dd { margin: 6px 0 0 0; color: var(--muted); font-size: 14px; }
+
+.success { color: #65d46e; }
+.error { color: #ff8080; }
+
 .contacts {
   list-style: none;
   margin: 18px 0 12px;
@@ -260,6 +310,8 @@ h1 {
     padding: 22px 18px;
     border-radius: 18px;
   }
+  .waitlist { flex-direction: column; }
+  .waitlist button { width: 100%; }
   .contact { padding: 10px 12px; }
   h1 { font-size: clamp(30px, 9vw, 46px); }
   .logo { font-size: clamp(16px, 3.4vw, 18px); }

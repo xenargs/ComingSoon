@@ -47,6 +47,27 @@
       <h1>Coming Soon</h1>
       <p class="tagline">Air-smooth code. Brush-perfect results.</p>
 
+      <ul class="value-props" aria-label="Key benefits">
+        <li>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.5 16.5 5 12l1.5-1.5L9.5 13.5 17.5 5.5 19 7z"/></svg>
+          Faster setup for busy devs
+        </li>
+        <li>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.5 16.5 5 12l1.5-1.5L9.5 13.5 17.5 5.5 19 7z"/></svg>
+          Zero‑config automation helpers
+        </li>
+        <li>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.5 16.5 5 12l1.5-1.5L9.5 13.5 17.5 5.5 19 7z"/></svg>
+          AI‑assisted refactors
+        </li>
+      </ul>
+
+      <form id="waitlist" class="waitlist" method="POST" action="https://formspree.io/f/mblkpbpl">
+        <input aria-label="Email" type="email" name="email" placeholder="you@example.com" required />
+        <button type="submit">Join the waitlist</button>
+      </form>
+      <p class="note">No spam. Unsubscribe anytime.</p>
+
       <ul class="contacts">
         <li>
           <a class="contact" href="mailto:xenargs@theairbrushcompany.co.uk">
@@ -57,6 +78,18 @@
           </a>
         </li>
       </ul>
+
+      <section class="faq" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <dl>
+          <dt>When will you launch?</dt>
+          <dd>We’re inviting early adopters soon. Join the waitlist for first access and updates.</dd>
+          <dt>Who is this for?</dt>
+          <dd>Indie developers and small teams who want streamlined automation and developer tooling.</dd>
+          <dt>How can I get early access?</dt>
+          <dd>Add your email to the waitlist above. We’ll send a private invite when the beta is ready.</dd>
+        </dl>
+      </section>
 
       <p class="small">© <span id="year"></span> xenargs softworks. All rights reserved. <span class="version">v1.1</span></p>
     </main>
@@ -211,6 +244,66 @@
           "https://github.com/xenargs"
         ]
       }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "xenargs softworks",
+        "url": "https://theairbrushcompany.co.uk/"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Xenargs Softworks",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web",
+        "description": "Xenargs Softworks builds modern developer tools and automation utilities. Coming soon — say hi at xenargs@theairbrushcompany.co.uk.",
+        "publisher": {"@type": "Organization", "name": "xenargs softworks"}
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {"@type": "Question", "name": "When will you launch?", "acceptedAnswer": {"@type": "Answer", "text": "We’re inviting early adopters soon. Join the waitlist to get first access and updates."}},
+          {"@type": "Question", "name": "Who is this for?", "acceptedAnswer": {"@type": "Answer", "text": "Indie developers and small teams who want streamlined automation and developer tooling."}},
+          {"@type": "Question", "name": "How can I get early access?", "acceptedAnswer": {"@type": "Answer", "text": "Add your email to the waitlist on our site. We’ll send a private invite when the beta is ready."}}
+        ]
+      }
+    </script>
+
+    <script>
+      (function initWaitlist(){
+        const form = document.getElementById('waitlist');
+        if (!form) return;
+        const emailInput = form.querySelector('input[name="email"]');
+        const endpoint = form.getAttribute('action') || '';
+        form.addEventListener('submit', async (e) => {
+          if (!emailInput || !emailInput.value) return;
+          if (endpoint.includes('REPLACE_ME')) {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            window.location.href = 'mailto:xenargs@theairbrushcompany.co.uk?subject=Waitlist&body=' + encodeURIComponent('Please add me to the waitlist: ' + email);
+            return;
+          }
+          e.preventDefault();
+          try {
+            const res = await fetch(endpoint, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
+            if (res.ok) {
+              form.innerHTML = '<span class="success">Thanks! You\'re on the list.</span>';
+            } else {
+              form.innerHTML = '<span class="error">Something went wrong. Please try again.</span>';
+            }
+          } catch (_) {
+            form.innerHTML = '<span class="error">Network error. Please try again.</span>';
+          }
+        });
+      })();
     </script>
   </body>
 </html>
